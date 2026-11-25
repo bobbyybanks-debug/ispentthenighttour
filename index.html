@@ -103,6 +103,13 @@ button.frame:hover{outline:2px solid var(--hot2);outline-offset:1px}
 .actions .tdel{position:static;height:auto;border-radius:4px;padding:3px 10px;font-size:12px}
 .mbody{padding:6px;background:#000;text-align:center}
 .mbody img,.mbody video{display:block;max-width:100%;max-height:72vh;margin:0 auto}
+/* Finder-style pop-up: outline rectangles zoom from the thumbnail to the window */
+.zrect{position:fixed;z-index:200;pointer-events:none;border:1px solid #000;box-shadow:inset 0 0 0 1px #fff}
+.float.popping{visibility:hidden}
+/* photo/video windows: picture edge to edge, no white mat */
+.float.mediawin > .body{margin:0;padding:0;border:0;box-shadow:none;background:#000}
+.float.mediawin .mbody img,.float.mediawin .mbody video{max-width:100%}
+.float.mediawin .mcap{margin:0;padding:8px 10px 10px}
 .empty-trash{margin:0;font-family:var(--f-type);font-size:16px;text-transform:lowercase}
 .ico.trash.full::after{content:"";position:absolute;left:3px;top:-12px;width:20px;height:10px;background:#fff;border:1px solid var(--ink);transform:rotate(-12deg);box-shadow:8px 2px 0 -1px #ffee00}
 .icon[aria-current] .ico.trash{outline:2px solid var(--hot2)}
@@ -165,6 +172,11 @@ button.frame:hover{outline:2px solid var(--hot2);outline-offset:1px}
   .carea .float .tb button[data-act=close]::before{content:"✕ Close"}
   .carea .float .tb button[data-act=zoom]{display:none}
   .carea .float .mbody img,.carea .float .mbody video{max-height:none}
+  /* phones: photos and videos pop up as a window over the dimmed page instead of filling the screen */
+  .carea .float.mediawin{left:10px!important;right:10px!important;top:50%!important;bottom:auto!important;transform:translateY(-50%)!important;max-height:86vh;
+    border:1px solid var(--ink);box-shadow:0 0 0 100vmax rgba(0,0,0,.55),4px 4px 0 rgba(0,0,0,.6);padding:0}
+  .carea .float.mediawin .tb{height:40px}
+  .carea .float.mediawin .mbody img,.carea .float.mediawin .mbody video{max-height:66vh;width:auto;max-width:100%}
   .cctl{display:none}
   .dicon{width:76px}
 }
@@ -1150,6 +1162,26 @@ body:not([data-city]) .icon span,body[data-city=""] .icon span{background:#1b144
   /* ---- desktops: a mini Mac desktop per city (and one for Lillenskap's Trash).
          Click an icon to open its window; drag by the title bar, close box closes,
          zoom box widens, double-click the title bar to roll it up. Photos open in their own windows. ---- */
+  // Finder-style opening: remember the thumbnail/icon that was clicked, then zoom outline rectangles from it to the new window
+  let zoomFrom = null;
+  document.addEventListener("pointerdown", (e) => { const f = e.target.closest && e.target.closest("button.frame, .dicon"); if (f) zoomFrom = {r: f.getBoundingClientRect(), t: Date.now()}; }, true);
+  function zoomRects(to, done){
+    const from = zoomFrom && Date.now() - zoomFrom.t < 1500 ? zoomFrom.r : null; zoomFrom = null;
+    if (reduceMotion || !from || !to.width){ done(); return; }
+    const steps = 7, trail = [];
+    let i = 0;
+    const tick = () => {
+      i++; const k = i / steps, e = 1 - Math.pow(1 - k, 2);
+      const z = el("div","zrect");
+      z.style.left = (from.left + (to.left - from.left) * e) + "px"; z.style.top = (from.top + (to.top - from.top) * e) + "px";
+      z.style.width = (from.width + (to.width - from.width) * e) + "px"; z.style.height = (from.height + (to.height - from.height) * e) + "px";
+      document.body.append(z); trail.push(z);
+      if (trail.length > 3) trail.shift().remove();
+      if (i < steps) setTimeout(tick, 26); else setTimeout(() => { trail.forEach(x => x.remove()); done(); }, 40);
+    };
+    tick();
+  }
+  const kindOf = (type) => { const t = String(type || "").toLowerCase(); return t.includes("jpeg") || t.includes("jpg") ? "JPEG image" : t.includes("png") ? "PNG image" : t.includes("gif") ? "GIF image" : t.includes("webp") ? "WebP image" : t.includes("quicktime") ? "QuickTime movie" : t.startsWith("video") ? "MPEG-4 movie" : "picture"; };
   function mkWin(title, infoL, infoR, extraCls){
     const w = el("section","win" + (extraCls ? " " + extraCls : ""));
     const tb = el("div","tb");
@@ -1187,7 +1219,12 @@ body:not([data-city]) .icon span,body[data-city=""] .icon span{background:#1b144
         const w = mkWin(r.name, r.where, r.vid ? "movie" : "picture");
         w.body.classList.add("mbody");
         if (r.vid){ w.body.classList.add("qbody"); w.body.append(player(blob(r.m.id))); }
-        else { const im = el("img"); im.src = blob(r.m.id); im.alt = (r.m.caption || r.name); w.body.append(im); }
+        else {
+          const im = el("img"); im.src = blob(r.m.id); im.alt = (r.m.caption || r.name); w.body.append(im);
+          const infoR = w.w.querySelector(".info span:last-child");
+          const setInfo = () => { if (infoR && im.naturalWidth) infoR.textContent = `${im.naturalWidth} × ${im.naturalHeight} · ${kindOf(r.m.type)}`; };
+          if (im.complete) setInfo(); else im.addEventListener("load", setInfo, {once:true});
+        }
         if (typeof r.m.caption === "string" && r.m.caption.trim()) w.body.append(el("p","mcap", r.m.caption.trim()));
         if (r.onDelete){ const row = el("div","actions"); row.style.marginTop = "8px"; row.append(trashBtn(r.name, () => r.onDelete(r.m))); w.body.append(row); }
         return w.w;
@@ -1210,7 +1247,17 @@ body:not([data-city]) .icon span,body[data-city=""] .icon span{background:#1b144
       const w = it.build(); w.classList.add("float"); w.dataset.key = it.key;
       const width = st.zoom[it.key] ? area.clientWidth : Math.min(it.width, area.clientWidth || it.width);
       w.style.width = width + "px";
+      const isMedia = it.key.startsWith("m:");
+      if (isMedia) w.classList.add("mediawin");
       let pos = st.pos[it.key];
+      let popN = 0;
+      if (isMedia && floatMode()){
+        // pop up where the viewer is looking, not down the stack
+        popN = (st.mpop = ((st.mpop || 0) + 1)) % 5;
+        const ar = area.getBoundingClientRect();
+        pos = {x: Math.round((area.clientWidth - width) / 2) + popN * 22, y: Math.max(0, Math.round(-ar.top + 64)) + popN * 22};
+        st.pos[it.key] = pos;
+      }
       if (!pos){ const n = st.n++ % 7; pos = {x: 16 + n * 38, y: 12 + n * 34}; st.pos[it.key] = pos; }
       w.style.left = clampX(pos.x, width) + "px"; w.style.top = Math.max(0,pos.y) + "px";
       w.style.setProperty("--tilt", ((it.key.charCodeAt(it.key.length-1) % 5) - 2) * 0.45 + "deg");
@@ -1222,6 +1269,23 @@ body:not([data-city]) .icon span,body[data-city=""] .icon span{background:#1b144
       lockScroll();
       const im = w.querySelector(".mbody img"); if (im) im.addEventListener("load", fit);
       fit();
+      if (isMedia){
+        // size a photo window so the whole picture fits the screen, then zoom it open
+        w.classList.add("popping");
+        let shown = false;
+        const show = () => {
+          if (shown) return; shown = true;
+          if (floatMode() && im && im.naturalWidth && !st.zoom[it.key]){
+            const maxH = Math.max(240, innerHeight - 170);
+            const want = Math.max(300, Math.min(it.width, Math.round(maxH * im.naturalWidth / im.naturalHeight) + 14));
+            w.style.width = want + "px";
+            w.style.left = clampX(Math.round((area.clientWidth - want) / 2) + popN * 22, want) + "px";
+            fit();
+          }
+          zoomRects(w.getBoundingClientRect(), () => w.classList.remove("popping"));
+        };
+        if (!im || im.complete) show(); else { im.addEventListener("load", show, {once:true}); im.addEventListener("error", show, {once:true}); setTimeout(show, 700); }
+      }
       if (focus){ if (!floatMode()) w.scrollIntoView({block:"nearest", behavior: reduceMotion ? "auto" : "smooth"}); const b = w.querySelector(".tb button"); b && b.focus({preventScroll:true}); }
     }
     function closeWin(k){
