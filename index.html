@@ -517,6 +517,7 @@ body.simple #ptnPill{display:none}
 .avatar{width:96px;height:96px;flex:none;border:2px solid var(--ink);border-radius:50%;background:#cfcfcf;display:grid;place-items:center;overflow:hidden}
 .avatar img{width:100%;height:100%;object-fit:cover}
 .avatar svg{width:70%;height:70%}
+@media (max-width:420px){.about{gap:12px}.avatar{width:72px;height:72px}}
 .about .txt{flex:1;min-width:0;max-width:62ch}
 .about h2{margin:0 0 6px;font-family:var(--f-rock);font-weight:400;font-size:38px;line-height:1.05}
 .kv{display:grid;grid-template-columns:auto 1fr;gap:2px 12px;font-family:var(--f-type);font-size:16px;margin:10px 0 0;text-transform:lowercase}
@@ -692,7 +693,7 @@ body.simple #ptnPill{display:none}
           <div class="txt">
             <h2 id="about-h">Lillenskap</h2>
             <img class="iso-about" src="/_blob/1e74caaf1486b887e2ba9a8602fe3433" alt="" width="640" height="286">
-            <p id="aboutLine" style="margin:0;font-family:var(--f-loud);font-size:16px"><span class="ph">[Lillenskap's about line goes here. You write it.]</span></p>
+            <p id="aboutLine" style="margin:0;font-family:var(--f-loud);font-size:16px;white-space:nowrap"><span class="ph">[Lillenskap's about line goes here. You write it.]</span></p>
           </div>
         </div>
       </div>
@@ -893,7 +894,16 @@ body.simple #ptnPill{display:none}
     if (site.about) p.textContent = site.about;
     else p.append(el("span","ph","[Lillenskap's about line goes here. You write it.]"));
     paintAvatar();
+    fitAboutLine();
   }
+  // keep the about line on one line: shrink the text (down to 10px) until it fits its column
+  function fitAboutLine(){
+    const p = $("aboutLine"); if (!p || !p.offsetParent) return;
+    let fs = 16; p.style.fontSize = fs + "px";
+    while (p.scrollWidth > p.clientWidth + 1 && fs > 10){ fs -= 0.5; p.style.fontSize = fs + "px"; }
+  }
+  window.addEventListener("resize", () => fitAboutLine());
+  if (document.fonts && document.fonts.ready) document.fonts.ready.then(() => fitAboutLine());
 
   /* marquee */
   function paintMarquee(){
@@ -2205,7 +2215,7 @@ body.simple #ptnPill{display:none}
     const m = $("tourMenu"); m.textContent = "";
     const allM = el("a",null); allM.href = "#all"; allM.setAttribute("role","menuitem"); allM.append(el("span",null,"All Cities")); if (!cur) allM.setAttribute("aria-current","page"); m.append(allM, el("hr"));
     list.forEach(c => { const a = cityLink(c, null, cur); a.setAttribute("role","menuitem"); a.append(el("span",null,c.city), el("small",null,shortDate(c.date))); m.append(a); });
-    $("aboutWin").hidden = !!cur;
+    $("aboutWin").hidden = !!cur; if (!cur) requestAnimationFrame(fitAboutLine);
     document.body.dataset.city = cur;
     applyShowNight();
     document.body.classList.toggle("cityview", !!cur);
