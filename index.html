@@ -115,9 +115,11 @@ button.frame:hover{outline:2px solid var(--hot2);outline-offset:1px}
 .icon[aria-current] .ico.trash{outline:2px solid var(--hot2)}
 /* polaroids */
 .grid.pola{grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:18px 14px;padding:6px 4px}
-.grid.pola .tile{background:#fbfbf6;padding:8px 8px 30px;box-shadow:2px 3px 0 rgba(0,0,0,.35);border:1px solid #d6d6cc;transform:rotate(var(--r,0deg))}
-.grid.pola .tile:nth-child(3n+1){--r:-2.5deg}.grid.pola .tile:nth-child(3n+2){--r:1.8deg}.grid.pola .tile:nth-child(3n){--r:-.8deg}
-.grid.pola .frame{aspect-ratio:1/1;border:0;background:#222}
+/* polaroids are real scans: show the scan as-is (its own white border), no added frame, tilt or crop */
+.grid.pola{align-items:start}
+.grid.pola .tile{background:none;padding:0;box-shadow:none;border:0;transform:none}
+.grid.pola .frame{aspect-ratio:auto;border:0;background:none;display:block}
+.grid.pola .frame img,.grid.pola .frame video{height:auto;object-fit:contain}
 .grid.pola .fn{display:none}
 .ico.pola{width:34px;height:38px;background:#fbfbf6;border:1px solid var(--ink);box-shadow:3px -3px 0 -1px #fbfbf6,3px -3px 0 0 var(--ink)}
 .ico.pola::after{content:"";position:absolute;left:4px;top:4px;right:4px;height:24px;background:linear-gradient(#ff9a3c,#c2357a 60%,#3a1c5c)}
