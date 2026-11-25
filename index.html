@@ -173,6 +173,11 @@ button.frame:hover{outline:2px solid var(--hot2);outline-offset:1px}
   .carea .float .tb button[data-act=close]{width:auto;height:34px;padding:0 12px;border-radius:4px;background:linear-gradient(var(--plat-hi),var(--plat));font:700 13px var(--f-sys);color:var(--ink);visibility:visible}
   .carea .float .tb button[data-act=close]::before{content:"✕ Close"}
   .carea .float .tb button[data-act=zoom]{display:none}
+  /* phones: windows are full-screen sheets, so only the red button (bigger, easy to tap) */
+  .carea .float .tb .lt{width:24px;height:24px}
+  .carea .float .tb .lt::after{content:"×";font-size:17px}
+  .carea .float .tb .lt.y,.carea .float .tb .lt.g{display:none}
+  .carea .float .tb.haslights::after{width:24px}
   .carea .float .mbody img,.carea .float .mbody video{max-height:none}
   /* phones: photos and videos pop up as a window over the dimmed page instead of filling the screen */
   .carea .float.mediawin{left:10px!important;right:10px!important;top:50%!important;bottom:auto!important;transform:translateY(-50%)!important;max-height:86vh;
@@ -516,6 +521,26 @@ body:not([data-city]) .icon span,body[data-city=""] .icon span{background:#1b144
   background:repeating-linear-gradient(var(--plat) 0 1px,var(--plat-lo) 1px 2px,var(--plat) 2px 3px)}
 .tb .box{width:11px;height:11px;flex:none;border:1px solid var(--ink);background:linear-gradient(135deg,var(--plat-hi),var(--plat-lo));box-shadow:inset 1px 1px 0 var(--plat-hi)}
 .tb .ttl{flex:1;text-align:center;min-width:0}
+/* window buttons on every title bar: red = close, yellow = minimize (roll up), green = expand */
+.tb.haslights > .box{display:none!important}
+.tb.haslights::after{content:"";width:58px;flex:none}
+.tb .lights{display:flex;align-items:center;gap:7px;flex:none;position:relative;z-index:1}
+.tb .lt{width:13px;height:13px;padding:0;margin:0;border-radius:50%;cursor:pointer;position:relative;display:grid;place-items:center;
+  border:1px solid rgba(0,0,0,.28);box-shadow:inset 0 1px 1px rgba(255,255,255,.55),0 .5px 0 rgba(255,255,255,.6)}
+.tb .lt.r{background:radial-gradient(circle at 50% 30%,#ff9f97 0,#f2645b 45%,#e0463e 100%);border-color:#c8433b}
+.tb .lt.y{background:radial-gradient(circle at 50% 30%,#ffe08a 0,#f7bd3a 45%,#e3a224 100%);border-color:#c99023}
+.tb .lt.g{background:radial-gradient(circle at 50% 30%,#a6ec8a 0,#67c94a 45%,#4fb033 100%);border-color:#3f9a2a}
+.tb .lt::after{content:"";font:700 10px/1 -apple-system,"Helvetica Neue",Arial,sans-serif;color:rgba(0,0,0,.55)}
+.tb .lights:hover .lt.r::after,.tb .lt.r:focus-visible::after{content:"×";font-size:12px}
+.tb .lights:hover .lt.y::after,.tb .lt.y:focus-visible::after{content:"−"}
+.tb .lights:hover .lt.g::after,.tb .lt.g:focus-visible::after{content:"+"}
+.tb .lt:focus-visible{outline:2px solid var(--sel);outline-offset:1px}
+.tb .lt:active{filter:brightness(.85)}
+.float:not(.active) .tb .lt{background:#cfcfcf;border-color:#a9a9a9;box-shadow:none}
+.win.wshade > :not(.tb){display:none!important}
+.win.hiddenwin{display:none!important}
+.win.maxed{position:fixed!important;left:8px!important;right:8px!important;top:28px!important;bottom:8px!important;width:auto!important;max-width:none!important;margin:0!important;
+  transform:none!important;z-index:85!important;overflow:auto;box-shadow:0 0 0 100vmax rgba(0,0,0,.35),4px 4px 0 rgba(0,0,0,.6)}
 .tb .ttl span{background:var(--plat);padding:0 8px;font-family:var(--f-sys);font-size:13px;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;display:inline-block;max-width:100%;vertical-align:middle}
 .info{display:flex;justify-content:space-between;gap:10px;padding:3px 8px;border-bottom:1px solid var(--plat-lo);font-family:var(--f-sys);font-size:11px;flex-wrap:wrap}
 .body{background:var(--paper);margin:6px;border:1px solid var(--plat-lo);box-shadow:inset 1px 1px 0 var(--plat-lo);padding:14px;min-width:0}
@@ -1228,6 +1253,28 @@ body:not([data-city]) .icon span,body[data-city=""] .icon span{background:#1b144
     tick();
   }
   const kindOf = (type) => { const t = String(type || "").toLowerCase(); return t.includes("jpeg") || t.includes("jpg") ? "JPEG image" : t.includes("png") ? "PNG image" : t.includes("gif") ? "GIF image" : t.includes("webp") ? "WebP image" : t.includes("quicktime") ? "QuickTime movie" : t.startsWith("video") ? "MPEG-4 movie" : "picture"; };
+  const hiddenWins = new Set();   // static windows the visitor closed (kept closed when the page re-renders)
+  function upgradeTitleBar(tb){
+    if (!tb || tb.classList.contains("haslights") || !tb.querySelector(".ttl")) return;
+    const win = tb.closest(".win, .float, .macdlg"); if (!win) return;
+    const title = (tb.querySelector(".ttl") || {}).textContent || "window";
+    if (!win.classList.contains("float") && hiddenWins.has(win.id || title)) win.classList.add("hiddenwin");
+    const mk = (cls, label, fn) => { const b = el("button","lt " + cls); b.type = "button"; b.setAttribute("aria-label", `${label} ${title}`.trim()); b.title = label; b.addEventListener("click", (e) => { e.stopPropagation(); fn(); }); b.addEventListener("pointerdown", (e) => e.stopPropagation()); return b; };
+    const closeBtn = tb.querySelector('button[data-act="close"]') || (win.classList.contains("macdlg") ? tb.querySelector("button.box") : null);
+    const zoomBtn = tb.querySelector('button[data-act="zoom"]');
+    const isFloat = win.classList.contains("float");
+    const lights = el("div","lights");
+    lights.append(
+      mk("r", "Close", () => { if (closeBtn) closeBtn.click(); else { win.classList.remove("maxed"); win.classList.add("hiddenwin"); hiddenWins.add(win.id || title); } }),
+      mk("y", "Minimize", () => { if (isFloat) tb.dispatchEvent(new MouseEvent("dblclick", {bubbles:true})); else win.classList.toggle("wshade"); }),
+      mk("g", "Expand", () => { if (zoomBtn && isFloat && floatMode()) zoomBtn.click(); else { win.classList.toggle("maxed"); if (win.classList.contains("maxed")) win.scrollTop = 0; } })
+    );
+    tb.prepend(lights); tb.classList.add("haslights");
+  }
+  function upgradeAllTitleBars(root){ (root || document).querySelectorAll(".tb").forEach(upgradeTitleBar); }
+  new MutationObserver((muts) => { for (const m of muts) m.addedNodes.forEach(n => { if (n.nodeType !== 1) return; if (n.classList && n.classList.contains("tb")) upgradeTitleBar(n); else if (n.querySelectorAll) upgradeAllTitleBars(n); }); })
+    .observe(document.body, {childList:true, subtree:true});
+  document.addEventListener("keydown", (e) => { if (e.key === "Escape"){ const m = document.querySelector(".win.maxed"); if (m) m.classList.remove("maxed"); } });
   function mkWin(title, infoL, infoR, extraCls){
     const w = el("section","win" + (extraCls ? " " + extraCls : ""));
     const tb = el("div","tb");
@@ -1737,14 +1784,19 @@ body:not([data-city]) .icon span,body[data-city=""] .icon span{background:#1b144
         {key: base + "/phone", icon:"folder", label:"iPhone", badge: locked ? 0 : phone.length, locked: lockedAll},
         {key: base + "/pola", icon:"pola", label:"Polaroids", badge: locked ? 0 : polas.length, locked: lockedAll},
         {key: base + "/recaps", icon:"folder", label:"Recaps", badge: locked ? 0 : nRec, locked: lockedAll},
-        {key: base + "/info", icon:"doc", label:`${cityLc} info`},
         {key: base + "/trash", icon:"trash" + (outtakes.length && !locked ? " full" : ""), label:"Trash", badge: locked ? 0 : outtakes.length, locked: lockedAll}
       ];
       add({key: base, width:600, build(){
-        let note = null;
-        if (lockedAll){ note = el("p","fnote", canEdit ? `locked for fans until ${shortDate(p.date)} · you can still open everything` : `${unlockText(p).toLowerCase()} the folders open on show day.`); }
-        else if (isNew(p)){ note = el("p","fnote"); note.append(el("span","new blink","NEW!!"), " fresh from the show"); }
-        return folderWin(label, path, kids, note);
+        const note = el("div");
+        if (p.line || canEdit){
+          const line = el("div","line"); line.append(miniAvatar());
+          const lp = el("p"); lp.append(el("span","who","Lillenskap posted:"));
+          if (p.line) lp.append(document.createTextNode(p.line)); else lp.append(el("span","ph","[his line for this city]"));
+          line.append(lp); note.append(line);
+        }
+        if (lockedAll) note.append(el("p","fnote", canEdit ? `locked for fans until ${shortDate(p.date)} · you can still open everything` : `${unlockText(p).toLowerCase()} the folders open on show day.`));
+        else if (isNew(p)){ const n = el("p","fnote"); n.append(el("span","new blink","NEW!!"), " fresh from the show"); note.append(n); }
+        return folderWin(label, path, kids, note.childNodes.length ? note : null);
       }});
       const lockedWin = (name) => () => { const w = mkWin(`“${name}” is locked`, pathEl(here), "locked"); w.body.append(lockAlert(`${label} opens on show day. ${unlockText(p)}`)); return w.w; };
       const mediaFolder = (key, name, list, prefix, cls, field, width, empty) => add({key, width, build: locked ? lockedWin(name) : () => {
@@ -1775,30 +1827,6 @@ body:not([data-city]) .icon span,body[data-city=""] .icon span{background:#1b144
           return vw.w;
         }});
       });
-      // the info file: his line, where and when, the crew's comment
-      add({key: base + "/info", width:520, build(){
-        const w = mkWin(`${cityLc} info`, pathEl(here), "simpletext");
-        const head = el("div","cityhead"); head.append(el("h3",null,cityLc), el("span","when",[fmtDate(p.date), p.venue].filter(Boolean).join("   ·   ")));
-        w.body.append(head);
-        if (p.line || canEdit){
-          const line = el("div","line"); line.append(miniAvatar());
-          const lp = el("p"); lp.append(el("span","who","Lillenskap posted:"));
-          if (p.line) lp.append(document.createTextNode(p.line)); else lp.append(el("span","ph","[his line for this city]"));
-          line.append(lp); w.body.append(line);
-        }
-        const kv = el("dl","ginfo");
-        const kvAdd = (k, v) => { kv.append(el("dt",null,k + ":"), el("dd",null,v)); };
-        kvAdd("Kind", "Show"); kvAdd("Where", p.venue || "—"); kvAdd("Date", fmtDate(p.date) || "—");
-        kvAdd("Size", locked ? "locked until show day" : nItems(photos.length + phone.length + polas.length + nRec));
-        w.body.append(kv);
-        if (p.comment || canEdit){
-          const cm = el("div","gi-c"); cm.append(el("span","gi-l","Comments:"));
-          const bx = el("div","gi-box"); if (p.comment) bx.textContent = p.comment; else bx.append(el("span","ph","[your comment for this city: add it in the panel]"));
-          cm.append(bx); w.body.append(cm);
-        }
-        if (canEdit && db) w.body.append(deleteRow(id));
-        return w.w;
-      }});
     });
 
     // ---- Camera Roll: every photo, iPhone pic and polaroid, newest show first, one section per date
@@ -2718,6 +2746,7 @@ body:not([data-city]) .icon span,body[data-city=""] .icon span{background:#1b144
   const vIcon = mItem(viewM, "by Icon", () => setView("icon")), vList = mItem(viewM, "by List", () => setView("list"));
   function setView(m){ viewMode = m; document.body.classList.toggle("listview", m === "list"); vIcon.toggleAttribute("aria-current", m === "icon"); vList.toggleAttribute("aria-current", m === "list"); }
   setView("icon");
+  mItem(viewM, "Show All Windows", () => { document.querySelectorAll(".win.hiddenwin, .win.wshade").forEach(w => w.classList.remove("hiddenwin","wshade")); hiddenWins.clear(); requestAnimationFrame(fitAboutLine); });
   specialM.m.append(el("hr"));
   mItem(specialM, "Restart", () => runBoot(true));
   mItem(specialM, "About This Macintosh", aboutMac);
@@ -2797,6 +2826,7 @@ body:not([data-city]) .icon span,body[data-city=""] .icon span{background:#1b144
   const textToRoute = (txt) => txt.split("\n").map(l => l.trim()).filter(Boolean).map(l => { const [date="",city="",venue=""] = l.split(/\s*[—–|-]{1,2}\s*/); return {date,city,venue}; }).slice(0,200);
 
   finderWanted = finderKeyFor(hashSlug());   // a shared link like #brooklyn opens that folder once the files load
+  upgradeAllTitleBars();
   paintAbout(); paintMarquee(); paintCountdown(); paintNav(); paintPosts("loading");
 
   /* sparkle trail */
