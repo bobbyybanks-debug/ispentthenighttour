@@ -472,6 +472,11 @@ body.simple #ptnPill{display:none}
 .float.dragging .tb{cursor:grabbing}
 .float.shaded > :not(.tb){display:none}
 .vbody{padding:8px;background:#000}
+.ytbox{position:relative;width:100%;aspect-ratio:16/9;background:#000}
+.ytbox iframe{position:absolute;inset:0;width:100%;height:100%;border:0;display:block}
+.ytbar{display:flex;justify-content:space-between;gap:10px;padding:6px 10px;background:#111;color:#ddd;font-family:var(--f-sys);font-size:11px}
+.ytbar a{color:#ffee00;text-decoration:none}.ytbar a:hover{text-decoration:underline}
+.float.mediawin .vbody .actions{padding:8px 10px;margin:0!important;background:#111}
 .qt.big .lbl{font-size:22px}
 .qt.big .play{width:72px;height:50px}
 @media (max-width:720px){
@@ -1011,6 +1016,21 @@ body:not([data-city]) .icon span,body[data-city=""] .icon span{background:#1b144
   const YT_HOSTS = ["youtube.com","www.youtube.com","m.youtube.com","youtu.be","music.youtube.com"];
   const isYT = (u) => { try { const x = new URL(String(u).trim()); return x.protocol === "https:" && YT_HOSTS.includes(x.hostname); } catch { return false; } };
   const ytList = (v) => Array.isArray(v) ? v.filter(isYT).map(u => String(u).trim()) : [];
+  const ytId = (u) => { try { const x = new URL(String(u).trim()); const id = x.hostname === "youtu.be" ? x.pathname.slice(1) : (x.searchParams.get("v") || (x.pathname.match(/^\/(?:embed|shorts|live)\/([^/?#]+)/) || [])[1] || ""); return /^[\w-]{6,20}$/.test(id) ? id : ""; } catch { return ""; } };
+  const ytStart = (u) => { try { const t = new URL(String(u).trim()).searchParams.get("t") || ""; const m = t.match(/^(?:(\d+)h)?(?:(\d+)m)?(?:(\d+)s?)?$/); return m ? (+(m[1]||0))*3600 + (+(m[2]||0))*60 + (+(m[3]||0)) : 0; } catch { return 0; } };
+  // a real YouTube player inside the window (privacy-enhanced embed); "watch on youtube" stays as a link underneath
+  function ytPlayer(u, title){
+    const id = ytId(u); const wrap = el("div","ytwrap");
+    if (!id){ const a = el("a","btn","Watch on YouTube ↗"); a.href = u; a.target = "_blank"; a.rel = "noopener noreferrer"; wrap.append(a); return wrap; }
+    const f = el("iframe"); const st = ytStart(u);
+    f.src = `https://www.youtube-nocookie.com/embed/${id}?rel=0&playsinline=1${st ? "&start=" + st : ""}`;
+    f.title = title; f.loading = "lazy"; f.allowFullscreen = true;
+    f.setAttribute("allow", "accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share; fullscreen");
+    f.setAttribute("referrerpolicy", "strict-origin-when-cross-origin");
+    const box = el("div","ytbox"); box.append(f);
+    const bar = el("div","ytbar"); const a = el("a",null,"watch on youtube ↗"); a.href = u; a.target = "_blank"; a.rel = "noopener noreferrer"; bar.append(el("span",null,title), a);
+    wrap.append(box, bar); return wrap;
+  }
   const mediaList = (v) => Array.isArray(v) ? v.filter(x => x && typeof x.id === "string") : [];
 
   const isHeic = (f) => /hei[cf]/i.test(f.type || "") || /\.(heic|heif)$/i.test(f.name || "");
@@ -1745,13 +1765,10 @@ body:not([data-city]) .icon span,body[data-city=""] .icon span{background:#1b144
       if (recap && !locked) add({key: base + "/vf", width:460, build(){ const vw = mkWin("RECAP.MOV", pathEl(where("Recaps")), "uploaded"); vw.body.classList.add("vbody"); vw.body.append(player(blob(recap.id))); vw.w.classList.add("mediawin"); return vw.w; }});
       if (!locked) videos.forEach((u, i) => {
         const name = `RECAP_${String(i+1).padStart(2,"0")}.MOV`;
-        add({key: base + "/v" + i, width:420, build(){
-          const vw = mkWin(name, pathEl(where("Recaps")), "youtube"); vw.body.classList.add("vbody");
-          const a = el("a","qt big"); a.href = u; a.target = "_blank"; a.rel = "noopener noreferrer";
-          a.setAttribute("aria-label", `Watch ${p.city || "city"} recap ${i+1} on YouTube`);
-          const scr = el("div","scr"); scr.append(el("span","lbl", name), el("span","play"));
-          const bar = el("div","bar"); bar.append(el("span",null,"watch on youtube ↗"), el("span",null,"00:00 / --:--"));
-          a.append(scr, bar); vw.body.append(a);
+        add({key: base + "/v" + i, width:720, build(){
+          const vw = mkWin(name, pathEl(where("Recaps")), "youtube movie"); vw.body.classList.add("vbody");
+          vw.w.classList.add("mediawin");
+          vw.body.append(ytPlayer(u, `${label} · ${name}`));
           if (canEdit && db){ const row = el("div","actions"); row.style.marginTop = "8px"; row.append(trashBtn(name, () => removeFrom(id, "videos", x => x === u))); vw.body.append(row); }
           return vw.w;
         }});
