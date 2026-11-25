@@ -13,7 +13,7 @@
 <script src="/js/supabase-2.99.3.js"></script>
 <script src="/js/istn-backend.js"></script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Pixelify+Sans:wght@400;700&family=VT323&family=Rye&family=Special+Elite&family=UnifrakturCook:wght@700&family=New+Rocker&family=Archivo:wght@200;900&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Pixelify+Sans:wght@400;700&family=VT323&family=Rye&family=Special+Elite&family=UnifrakturCook:wght@700&family=New+Rocker&display=swap">
 <style>
 /* Layout: a Mac OS 8 "Platinum" desktop. Menu bar on top, desktop icons down the right,
    stacked windows in the middle: title window, marquee, About Lillenskap, then one window per city. */
@@ -38,9 +38,6 @@
   --f-type:"Special Elite","American Typewriter","Courier New",monospace;
   --f-marker:"Permanent Marker","Marker Felt","Comic Sans MS",cursive;
   --f-black:"UnifrakturCook","Old English Text MT","Times New Roman",serif;
-  --f-num:"Archivo","Helvetica Neue",Arial,sans-serif;   /* print numerals: thin grid dates, black countdown */
-  --cream:#f6f1df; --riso:#9a5fd6; --riso-dk:#5f3596; --riso-lt:#dcc8f3;
-  --grain:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='180' height='180'><filter id='g'><feTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='2' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 .37  0 0 0 0 .21  0 0 0 0 .59  0 0 0 .32 -.08'/></filter><rect width='100%25' height='100%25' filter='url(%23g)'/></svg>");
   --f-rock:"New Rocker","UnifrakturCook","Times New Roman",serif;   /* Lillenskap's name: readable k */
 }
 html,body{min-height:100%}
@@ -90,11 +87,11 @@ body[data-city] *{image-rendering:auto}
 body[data-city="chicago"] .desktop,body[data-city="brooklyn"] .desktop,body[data-city="los-angeles"] .desktop{padding-bottom:300px}
 @media (max-width:720px){body[data-city="chicago"] .desktop,body[data-city="brooklyn"] .desktop,body[data-city="los-angeles"] .desktop{padding-bottom:200px}}
 body[data-city="chicago"]{--desk:#2f6fae;--desk-dot:#2a64a0;background-color:#5aa0d8;
-  background-image:url("/art/sky-chicago.png"),linear-gradient(transparent,transparent),linear-gradient(180deg,#1f4f8f 0%,#4f94d2 55%,#a9d8f2 100%)}
+  background-image:url("data:image/png;base64,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"),linear-gradient(transparent,transparent),linear-gradient(180deg,#1f4f8f 0%,#4f94d2 55%,#a9d8f2 100%)}
 body[data-city="brooklyn"]{--desk:#1c1850;--desk-dot:#16133f;background-color:#12103a;
-  background-image:url("/art/sky-brooklyn.png"),url("data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 width=%27140%27 height=%27110%27%3E%3Crect x=%2718%27 y=%2722%27 width=%272%27 height=%272%27 fill=%27%23fff%27/%3E%3Crect x=%2790%27 y=%2712%27 width=%272%27 height=%272%27 fill=%27%23ffee99%27/%3E%3Crect x=%2760%27 y=%2770%27 width=%272%27 height=%272%27 fill=%27%23fff%27/%3E%3Crect x=%27120%27 y=%2788%27 width=%272%27 height=%272%27 fill=%27%23fff%27 fill-opacity=%27.6%27/%3E%3C/svg%3E"),linear-gradient(180deg,#07061f 0%,#141142 60%,#2b2266 100%)}
+  background-image:url("data:image/png;base64,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"),url("data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 width=%27140%27 height=%27110%27%3E%3Crect x=%2718%27 y=%2722%27 width=%272%27 height=%272%27 fill=%27%23fff%27/%3E%3Crect x=%2790%27 y=%2712%27 width=%272%27 height=%272%27 fill=%27%23ffee99%27/%3E%3Crect x=%2760%27 y=%2770%27 width=%272%27 height=%272%27 fill=%27%23fff%27/%3E%3Crect x=%27120%27 y=%2788%27 width=%272%27 height=%272%27 fill=%27%23fff%27 fill-opacity=%27.6%27/%3E%3C/svg%3E"),linear-gradient(180deg,#07061f 0%,#141142 60%,#2b2266 100%)}
 body[data-city="los-angeles"]{--desk:#8c2f6a;--desk-dot:#7a285c;background-color:#ff7a6e;
-  background-image:url("/art/sky-los-angeles.png"),url("data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 width=%27140%27 height=%27110%27%3E%3Crect x=%2718%27 y=%2722%27 width=%272%27 height=%272%27 fill=%27%23fff%27/%3E%3Crect x=%2790%27 y=%2712%27 width=%272%27 height=%272%27 fill=%27%23ffee99%27/%3E%3Crect x=%2760%27 y=%2770%27 width=%272%27 height=%272%27 fill=%27%23fff%27/%3E%3Crect x=%27120%27 y=%2788%27 width=%272%27 height=%272%27 fill=%27%23fff%27 fill-opacity=%27.6%27/%3E%3C/svg%3E"),linear-gradient(180deg,#3a1c5c 0%,#c2357a 35%,#ff5f6d 62%,#ffb347 100%)}
+  background-image:url("data:image/png;base64,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"),url("data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 width=%27140%27 height=%27110%27%3E%3Crect x=%2718%27 y=%2722%27 width=%272%27 height=%272%27 fill=%27%23fff%27/%3E%3Crect x=%2790%27 y=%2712%27 width=%272%27 height=%272%27 fill=%27%23ffee99%27/%3E%3Crect x=%2760%27 y=%2770%27 width=%272%27 height=%272%27 fill=%27%23fff%27/%3E%3Crect x=%27120%27 y=%2788%27 width=%272%27 height=%272%27 fill=%27%23fff%27 fill-opacity=%27.6%27/%3E%3C/svg%3E"),linear-gradient(180deg,#3a1c5c 0%,#c2357a 35%,#ff5f6d 62%,#ffb347 100%)}
 @media (max-width:720px){body[data-city="chicago"],body[data-city="brooklyn"],body[data-city="los-angeles"]{background-size:640px 240px,140px 110px,100% 100%}}
 body[data-city="trash"]{--desk:#555;--desk-dot:#4a4a4a;background-color:var(--desk);background-image:repeating-linear-gradient(45deg,#4d4d4d 0 10px,#555 10px 20px)}
 button.frame{padding:0;cursor:zoom-in;width:100%;font:inherit;position:relative}
@@ -166,7 +163,7 @@ button.frame:hover{outline:2px solid var(--hot2);outline-offset:1px}
   .carea .float > .body{flex:1;overflow:auto;-webkit-overflow-scrolling:touch}
   .carea .float .tb{height:48px;cursor:default}
   .carea .float .tb .ttl span{font-size:15px}
-  .carea .float .tb button[data-act=close]{width:auto;height:34px;padding:0 12px;border-radius:4px;background:linear-gradient(var(--plat-hi),var(--plat));font-weight:700;font-size:13px;font-family:var(--f-sys);color:var(--ink);visibility:visible}
+  .carea .float .tb button[data-act=close]{width:auto;height:34px;padding:0 12px;border-radius:4px;background:linear-gradient(var(--plat-hi),var(--plat));font:700 13px var(--f-sys);color:var(--ink);visibility:visible}
   .carea .float .tb button[data-act=close]::before{content:"✕ Close"}
   .carea .float .tb button[data-act=zoom]{display:none}
   .carea .float .mbody img,.carea .float .mbody video{max-height:none}
@@ -195,12 +192,12 @@ button.frame:hover{outline:2px solid var(--hot2);outline-offset:1px}
 .lam-card img{width:64px;height:auto;margin:6px 0 2px;image-rendering:pixelated}
 .lam-role{font:900 18px/1 "Arial Black",Arial,sans-serif}
 .lam-name{font-family:var(--f-sys);font-size:11px}
-.jk-band{width:230px;height:26px;background:#ff6a00;border-radius:4px;border:1px solid #7a2e00;display:flex;align-items:center;overflow:hidden;color:#fff;font-weight:700;font-size:12px;font-family:var(--f-sys);white-space:nowrap;padding:0 8px;box-shadow:inset 0 -3px 0 rgba(0,0,0,.15)}
+.jk-band{width:230px;height:26px;background:#ff6a00;border-radius:4px;border:1px solid #7a2e00;display:flex;align-items:center;overflow:hidden;color:#fff;font:700 12px var(--f-sys);white-space:nowrap;padding:0 8px;box-shadow:inset 0 -3px 0 rgba(0,0,0,.15)}
 .jk-setlist{width:120px;height:160px;background:#fff repeating-linear-gradient(180deg,transparent 0 17px,#9ec5ff 17px 18px);border:1px solid #888;padding:8px 10px;box-sizing:border-box;display:grid;align-content:start;gap:9px}
 .sl-h{font-family:var(--f-loud);font-weight:700;font-size:15px}
 .sl-l{display:block;height:3px;background:#1b1b8a;border-radius:2px}
 .sl-l.x{background:#e00010}
-.jk-nuwo{padding:6px 16px;background:#fff;border:3px solid #000;border-radius:50%;font-weight:900;font-size:20px;font-family:var(--f-sys);letter-spacing:.06em}
+.jk-nuwo{padding:6px 16px;background:#fff;border:3px solid #000;border-radius:50%;font:900 20px var(--f-sys);letter-spacing:.06em}
 .jk-vip{width:64px;height:64px;border-radius:50%;background:radial-gradient(#ff4d6d,#b0001e);border:3px dashed #ffee00;display:grid;place-items:center;color:#ffee00;font:900 20px "Arial Black",Arial,sans-serif}
 .jk-img{width:200px}
 .jk-img img{display:block;width:100%;height:auto;pointer-events:none}
@@ -337,7 +334,7 @@ body[data-city="admin"]{--desk:#4a6a6a;--desk-dot:#436060;background-color:#4f70
 .adm-th.dragging{opacity:.4}
 .adm-tf{position:relative;aspect-ratio:1/1;background:#eee;overflow:hidden;border:1px solid var(--ink)}
 .adm-tf img,.adm-tf video{width:100%;height:100%;object-fit:cover;display:block;pointer-events:none}
-.adm-cover{position:absolute;left:4px;top:4px;background:#ffee00;border:1px solid #000;font-weight:700;font-size:10px;font-family:var(--f-sys);padding:0 4px}
+.adm-cover{position:absolute;left:4px;top:4px;background:#ffee00;border:1px solid #000;font:700 10px var(--f-sys);padding:0 4px}
 .adm-ctr{display:flex;gap:3px;align-items:center;flex-wrap:wrap}
 .adm-ctr .btn{padding:2px 7px}
 .adm-ctr select{font-size:11px;max-width:100%;flex:1;min-width:0}
@@ -381,7 +378,7 @@ body[data-city="post"]{--desk:#2a2a5a;--desk-dot:#24244e;background-color:#2a2a5
 .adm-cap:focus{border-color:var(--sel);outline:none;background:#fff}
 .adm-cap.err{border-color:#e00010}
 /* admin batch 1 */
-.adm-badge{position:absolute;right:4px;bottom:4px;font-weight:700;font-size:10px;font-family:var(--f-sys);padding:0 4px;border:1px solid #000;text-transform:uppercase}
+.adm-badge{position:absolute;right:4px;bottom:4px;font:700 10px var(--f-sys);padding:0 4px;border:1px solid #000;text-transform:uppercase}
 .b-hidden{background:#333;color:#fff}.b-scheduled{background:#9fd3ff}.b-pending{background:#ffcc00}
 .tile .frame{position:relative}
 .adm-vis{display:flex;gap:3px;align-items:center;flex-wrap:wrap}
@@ -432,12 +429,8 @@ body.simple #ptnPill{display:none}
 .ico.movie::after{content:"";position:absolute;left:16px;top:10px;border-left:11px solid #e00010;border-top:6px solid transparent;border-bottom:6px solid transparent}
 .nbadge{position:absolute;right:-8px;top:-8px;min-width:18px;height:18px;border-radius:9px;background:var(--hot);color:var(--paper);font:700 11px/18px var(--f-sys);font-style:normal;text-align:center;border:1px solid var(--ink);padding:0 3px;box-sizing:border-box}
 .cctl{display:flex;gap:8px;flex-wrap:wrap}
-.ctop{display:flex;align-items:center;gap:8px 12px;flex-wrap:wrap}
-.ctop .btn{text-decoration:none}
-.chint{flex:1 1 auto;min-width:0;font-family:var(--f-type);font-size:13px;color:var(--paper);text-transform:lowercase;opacity:.85;text-shadow:1px 1px 0 rgba(0,0,0,.6)}
-.ctop .cctl{margin-left:auto}
-@media (max-width:720px){.ctop .cctl{display:none}}
-.carea{position:relative;min-height:340px;min-width:0}
+.chint{font-family:var(--f-type);font-size:14px;color:var(--paper);text-transform:lowercase;background:rgba(0,0,0,.45);padding:2px 8px;justify-self:start}
+.carea{position:relative;min-height:520px;min-width:0}
 .float{position:absolute;max-width:100%;transform:rotate(var(--tilt,0deg))}
 .float.active{box-shadow:4px 4px 0 rgba(0,0,0,.6)}
 .float:not(.active) .tb{background:var(--plat)}
@@ -505,27 +498,18 @@ body.simple #ptnPill{display:none}
 @keyframes blink{50%{visibility:hidden}}
 
 /* marquee */
-.marq{background:var(--cream) var(--grain);border:2px solid var(--ink);box-shadow:3px 3px 0 rgba(0,0,0,.45);color:var(--ink)}
-.marq .track{display:grid;grid-template-columns:repeat(var(--n,3),minmax(0,1fr))}
-.marq .soonmsg{padding:10px 14px;font-family:var(--f-type);text-transform:lowercase;text-align:center}
-.stub{position:relative;display:grid;align-content:start;gap:2px;padding:10px 14px 10px;color:var(--ink);text-decoration:none;border-left:1px solid var(--ink);min-width:0}
-.stub:first-child{border-left:0}
-.stub:hover,.stub:focus-visible{background:var(--riso-lt);outline:none}
-.stub .ix{position:absolute;left:6px;top:4px;font-weight:700;font-size:10px;font-family:var(--f-sys);color:var(--riso)}
-.stub .dd{font-weight:200;font-size:clamp(30px,4.6vw,46px);line-height:1;font-family:var(--f-num);letter-spacing:-.02em;font-variant-numeric:tabular-nums;padding-left:12px}
-.stub .cc{font-weight:700;font-size:14px;font-family:var(--f-sys);text-transform:lowercase;padding-left:12px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.stub .vv{font-size:13px;font-family:var(--f-type);color:var(--riso-dk);text-transform:lowercase;padding-left:12px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-@media (max-width:520px){.stub{padding:8px 6px}.stub .vv{display:none}.stub .dd{font-size:26px;padding-left:8px}.stub .cc{font-size:12px;padding-left:8px}.stub .ix{left:4px;top:3px}}
+.marq{overflow:hidden;background:var(--ink);border:2px inset var(--plat);color:var(--hot2);font-family:var(--f-type);font-size:21px;text-transform:lowercase;white-space:nowrap;padding:4px 0}
+.marq .track{display:inline-block;padding-left:100%;animation:scroll var(--dur,40s) linear infinite}
+.marq .sep{color:var(--hot);margin:0 18px}
+@keyframes scroll{to{transform:translateX(-100%)}}
 
 /* countdown */
-.count{display:flex;align-items:center;justify-content:center;gap:4px 18px;padding:10px 20px;
-  background:var(--cream) var(--grain);border:2px solid var(--ink);box-shadow:3px 3px 0 var(--riso);color:var(--ink)}
-.count .num{font-weight:900;font-size:clamp(84px,13vw,132px);line-height:.82;font-family:var(--f-num);letter-spacing:-.04em;font-variant-numeric:tabular-nums}
-.count .num.word{font-size:clamp(38px,7vw,64px);line-height:1;color:var(--riso)}
-.count .txt{display:grid;gap:2px;text-align:left;min-width:0}
-.count .k{font-weight:700;font-size:clamp(12px,1.6vw,14px);font-family:var(--f-sys);letter-spacing:.08em;text-transform:uppercase;color:var(--riso)}
-.count .c{font-family:var(--f-west);font-size:clamp(30px,5.4vw,48px);line-height:1.12;color:var(--ink)}
-.count .d{font-size:clamp(14px,2vw,17px);font-family:var(--f-type);text-transform:lowercase}
+.count{display:flex;flex-wrap:wrap;align-items:baseline;justify-content:center;gap:4px 14px;padding:12px 14px;text-align:center;
+  background:#ffee00;border:3px solid var(--ink);box-shadow:4px 4px 0 var(--hot);color:var(--ink)}
+.count .k{font-family:var(--f-west);font-size:clamp(20px,4vw,30px)}
+.count .c{font-family:var(--f-black);font-weight:700;font-size:clamp(30px,6vw,46px);line-height:1;color:var(--hot)}
+.count .d{font-family:var(--f-type);font-size:clamp(17px,3vw,22px);text-transform:lowercase}
+.count .d b{font-family:var(--f-mono);font-size:1.5em;font-weight:400;background:var(--ink);color:#7CFC00;padding:0 6px;margin:0 4px;font-variant-numeric:tabular-nums}
 .soon{display:inline-block;margin-left:6px;background:var(--ink);color:var(--hot2);font-family:var(--f-type);font-size:11px;padding:0 5px;text-transform:lowercase}
 
 /* about */
@@ -541,13 +525,11 @@ body.simple #ptnPill{display:none}
 .ph{background:#ffff99;outline:1px dashed #cc9900;padding:0 3px}
 
 /* city post */
-.bub{position:relative;isolation:isolate}
-.bub::before{content:"";position:absolute;inset:0;z-index:-1;background:var(--cream) var(--grain);border:2px solid var(--riso);border-radius:999px;filter:url(#riso-edge)}
-.line{display:flex;gap:12px;align-items:center;padding:12px 26px 12px 14px;margin-bottom:14px}
-.line .mini{width:34px;height:34px;flex:none;border:1px solid var(--ink);border-radius:50%;background:#cfcfcf;overflow:hidden}
+.line{display:flex;gap:10px;align-items:flex-start;padding:10px;margin-bottom:14px;background:#ffffcc;border:1px solid var(--ink)}
+.line .mini{width:32px;height:32px;flex:none;border:1px solid var(--ink);background:#cfcfcf;overflow:hidden}
 .line .mini img{width:100%;height:100%;object-fit:cover}
 .line p{margin:0;font-family:var(--f-loud);font-size:16px;line-height:1.35;min-width:0;overflow-wrap:anywhere}
-.line .who{display:block;font-family:var(--f-sys);font-size:11px;color:var(--riso);margin-bottom:2px}
+.line .who{display:block;font-family:var(--f-sys);font-size:11px;color:#555;margin-bottom:2px}
 .sect{margin:16px 0 8px;font-family:var(--f-sys);font-size:12px;display:flex;align-items:center;gap:8px}
 .sect::after{content:"";flex:1;border-top:1px dotted var(--plat-lo)}
 .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(130px,1fr));gap:10px}
@@ -593,15 +575,6 @@ body.simple #ptnPill{display:none}
 .prog{height:12px;border:1px solid var(--ink);background:var(--paper);margin-top:4px}
 .prog i{display:block;height:100%;width:0;background:repeating-linear-gradient(45deg,#3333cc 0 6px,#6666ff 6px 12px)}
 .alert{display:flex;gap:12px;align-items:flex-start}
-.riso-art{position:relative;height:96px;margin:-4px -4px 12px;background:var(--cream) var(--grain);border-bottom:2px solid var(--ink);overflow:hidden}
-.riso-art::before{content:"";position:absolute;inset:0;background:var(--sky) repeat-x left bottom/auto 100%;image-rendering:pixelated;filter:grayscale(1) sepia(1) hue-rotate(222deg) saturate(3.2) brightness(.95) contrast(1.1);opacity:.92}
-.riso-art .rt{position:absolute;right:8px;top:6px;font-weight:700;font-size:10px;font-family:var(--f-sys);color:var(--riso-dk);text-transform:uppercase;letter-spacing:.1em}
-.paper{background:var(--cream) var(--grain)!important}
-.paper .cityhead h3{text-shadow:2px 2px 0 var(--riso-lt)}
-.lockrow{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:10px 18px}
-.lockrow .cityhead{margin:0}
-.lockbub{display:flex;align-items:center;gap:12px;padding:10px 22px 10px 16px;font-size:15px;font-family:var(--f-type);text-transform:lowercase}
-.lockbub .lockb.big{margin-top:10px}
 .alert .stop{width:32px;height:32px;flex:none;border-radius:50%;background:var(--hot);color:var(--paper);display:grid;place-items:center;font-family:var(--f-sys);font-weight:700;border:1px solid var(--ink)}
 .foot{text-align:center;font-family:var(--f-mono);font-size:18px;color:var(--paper);display:grid;gap:8px;justify-items:center}
 
@@ -665,6 +638,8 @@ body.simple #ptnPill{display:none}
 .spin.s1{left:4%;top:10%;color:#ffee00}.spin.s2{right:5%;top:14%;color:#ff66ff;animation-duration:2s;animation-direction:reverse}
 .spin.s3{left:8%;bottom:10%;color:#66ffff;animation-duration:4s}.spin.s4{right:9%;bottom:12%;color:#ffffff;animation-duration:2.6s}
 @keyframes spin{to{transform:rotate(360deg)}}
+.marq.rev{background:#ff00cc;color:#000;font-family:var(--f-mono);font-size:22px;text-transform:uppercase;transform:rotate(1deg)}
+.marq.rev .track{animation-direction:reverse;animation-duration:30s}
 .new{animation:wiggle .35s ease-in-out infinite alternate,blink 1s steps(1,end) infinite}
 @keyframes wiggle{from{transform:rotate(-6deg) scale(1)}to{transform:rotate(6deg) scale(1.15)}}
 .menubar .face{width:16px;height:16px;border:1px solid var(--ink);object-fit:cover;display:block}
@@ -674,7 +649,7 @@ body.simple #ptnPill{display:none}
 
 .sparkle{position:fixed;pointer-events:none;z-index:50;font-size:14px;line-height:1;animation:fall .8s ease-out forwards}
 @keyframes fall{to{transform:translate(var(--dx),24px) scale(.3);opacity:0}}
-@media (prefers-reduced-motion:reduce){.blink,.haz{animation:none}}
+@media (prefers-reduced-motion:reduce){.blink,.haz{animation:none}.marq .track{animation:none;padding-left:0;white-space:normal}.marq{white-space:normal}}
 </style>
 </head>
 <body>
@@ -688,7 +663,6 @@ body.simple #ptnPill{display:none}
 </div>
 
 <div class="desktop">
-  <svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false"><filter id="riso-edge" x="-5%" y="-10%" width="110%" height="120%"><feTurbulence type="fractalNoise" baseFrequency=".9" numOctaves="2" seed="7" result="n"/><feDisplacementMap in="SourceGraphic" in2="n" scale="4" xChannelSelector="R" yChannelSelector="G"/></filter></svg>
   <div class="junk" id="junk" aria-hidden="true"></div>
   <main class="stack">
 
@@ -704,7 +678,7 @@ body.simple #ptnPill{display:none}
       </div>
     </section>
 
-    <nav class="marq" aria-label="Tour dates"><div class="track" id="marquee"><div class="soonmsg">loading tour dates…</div></div></nav>
+    <div class="marq" aria-label="Tour dates"><span class="track" id="marquee">LOADING TOUR DATES . . .</span></div>
 
 
     <div class="count" id="countdown" role="status" aria-live="polite" hidden></div>
@@ -935,14 +909,12 @@ body.simple #ptnPill{display:none}
   function paintMarquee(){
     const t = $("marquee"); t.textContent = "";
     const stops = (routing && Array.isArray(routing.stops)) ? routing.stops : [];
-    if (!stops.length) { t.append(el("div","soonmsg","tour dates coming soon")); t.style.setProperty("--n", 1); return; }
-    t.style.setProperty("--n", stops.length);
+    if (!stops.length) { t.textContent = "★ TOUR DATES COMING SOON ★ LILLENSKAP IS UPLOADING ★"; return; }
     stops.forEach((s, i) => {
-      const a = el("a","stub"); a.href = "#" + slug(s.city);
-      a.append(el("span","ix", String(i + 1).padStart(2, "0")), el("span","dd", String(s.date || "")), el("span","cc", String(s.city || "")));
-      if (s.venue) a.append(el("span","vv", String(s.venue)));
-      t.append(a);
+      if (i) t.append(el("span","sep","★"));
+      t.append(document.createTextNode([s.date, s.city, s.venue].filter(Boolean).join(" — ").toUpperCase()));
     });
+    t.parentElement.style.setProperty("--dur", Math.max(25, stops.length * 7) + "s");
   }
 
   /* countdown: whole calendar days between the viewer's local today and the show date */
@@ -966,14 +938,14 @@ body.simple #ptnPill{display:none}
     box.textContent = "";
     if (!stops.length){ box.hidden = true; return; }
     box.hidden = false;
-    const txt = el("div","txt");
-    if (!next){ txt.append(el("span","k","tour's over"), el("span","d","thank u for spending the night")); box.append(txt); return; }
+    if (!next){ box.append(el("span","k","TOUR'S OVER"), el("span","d","thank u for spending the night")); return; }
     const days = Math.round((next.day - t) / 864e5);
-    const num = days === 0 ? el("span","num word blink","TONIGHT") : el("span","num", String(days));
-    const where = [String(next.venue || ""), String(next.date || "")].filter(Boolean).join(" · ").toLowerCase();
-    txt.append(el("span","k", days === 0 ? "next stop" : days === 1 ? "day to the next stop" : "days to the next stop"), el("span","c", String(next.city || "TBA")));
-    if (where) txt.append(el("span","d", where));
-    box.append(num, txt);
+    box.append(el("span","k","NEXT STOP:"), el("span","c", String(next.city || "TBA")));
+    const d = el("span","d");
+    if (days === 0) { const b = el("b",null,"TONIGHT"); b.className = "blink"; d.append(b); }
+    else if (days === 1) d.append(el("b",null,"TOMORROW"));
+    else { d.append("in"); d.append(el("b",null,String(days))); d.append("days"); }
+    box.append(d);
   }
   /* show night: on a show date (viewer's local day), the home page takes on that city's skyline and the countdown gets loud */
   function applyShowNight(){
@@ -1080,19 +1052,14 @@ body.simple #ptnPill{display:none}
     return n <= 1 ? `Unlocks tomorrow (${when}).` : `Unlocks in ${n} days (${when}).`;
   }
   const visiblePosts = () => posts.filter(x => canEdit || !isLocked(x.data));
-  const SKY = {"chicago":"/art/sky-chicago.png","brooklyn":"/art/sky-brooklyn.png","los-angeles":"/art/sky-los-angeles.png"};
   function lockAlert(text){ const a = el("div","alert"); a.append(el("span","lockb big")); const m = el("p",null,text); m.style.margin = "6px 0 0"; a.append(m); return a; }
   function lockedWin(p, id){
     const w = el("section","win"); w.id = "city-" + id;
     const tb = el("div","tb"); tb.append(el("i","box")); const ttl = el("div","ttl"); const s = el("span"); s.textContent = `${(p.city||"").toUpperCase()}`; ttl.append(s); tb.append(ttl, el("i","box"));
     const info = el("div","info"); const l = el("span"); l.textContent = `${fmtDate(p.date)}${p.venue ? " · " + p.venue : ""}`; info.append(l, el("span",null,"locked"));
-    const body = el("div","body paper");
-    const sk = slug(p.city);
-    if (SKY[sk]){ const art = el("div","riso-art"); art.style.setProperty("--sky", `url("${SKY[sk]}")`); art.append(el("span","rt", (p.city||"") + " · " + shortDate(p.date))); body.append(art); }
-    const row = el("div","lockrow");
+    const body = el("div","body");
     const head = el("div","cityhead"); head.append(el("h3",null,(p.city||"").toLowerCase()), el("span","when",[fmtDate(p.date), p.venue].filter(Boolean).join("   ·   ")));
-    const bub = el("div","bub lockbub"); bub.append(el("span","lockb big"), el("span",null,unlockText(p)));
-    row.append(head, bub); body.append(row);
+    body.append(head, lockAlert(unlockText(p)));
     w.append(tb, info, body); return w;
   }
   function jumpOpts(p, id, field){
@@ -1121,12 +1088,10 @@ body.simple #ptnPill{display:none}
     head.append(el("h3",null,(p.city||"Untitled").toLowerCase()), el("span","when",[fmtDate(p.date), p.venue].filter(Boolean).join("   ·   ")));
     body.append(head);
 
-    if (p.line || canEdit){
-      const line = el("div","line bub"); line.append(miniAvatar());
-      const lp = el("p"); lp.append(el("span","who","Lillenskap posted:"));
-      if (p.line) lp.append(document.createTextNode(p.line)); else lp.append(el("span","ph","[his line for this city]"));
-      line.append(lp); body.append(line);
-    }
+    const line = el("div","line"); line.append(miniAvatar());
+    const lp = el("p"); lp.append(el("span","who","Lillenskap posted:"));
+    if (p.line) lp.append(document.createTextNode(p.line)); else lp.append(el("span","ph","[his line for this city]"));
+    line.append(lp); body.append(line);
 
     body.append(el("div","sect","PHOTOS"));
     const g = el("div","grid");
@@ -1207,11 +1172,9 @@ body.simple #ptnPill{display:none}
     const openBtn = el("button","btn","Open All"); openBtn.type = "button";
     const closeBtn = el("button","btn","Close All"); closeBtn.type = "button";
     const ctl = el("div","cctl"); ctl.append(openBtn, closeBtn);
-    const hint = el("div","chint", floatMode() ? "click an icon to open · drag windows around" : "tap an icon to open");
-    const back = el("a","btn","◀ all cities"); back.href = "#all";
-    const top = el("div","ctop"); top.append(back, hint, ctl);
+    const hint = el("div","chint", floatMode() ? "click an icon to open it · click a photo to blow it up · drag windows around · double-click a title bar to roll it up" : "tap an icon to open it · tap a photo to blow it up");
     const area = el("div","carea");
-    root.append(top, icons, area);
+    root.append(icons, ctl, hint, area);
     const wins = new Map(), iconEls = new Map();
 
     function mediaItem(k){
@@ -1230,7 +1193,7 @@ body.simple #ptnPill{display:none}
 
     const fit = () => {
       if (!floatMode()){ area.style.minHeight = ""; return; }
-      let h = 340; wins.forEach(w => { h = Math.max(h, w.offsetTop + w.offsetHeight + 40); }); area.style.minHeight = h + "px";
+      let h = 520; wins.forEach(w => { h = Math.max(h, w.offsetTop + w.offsetHeight + 40); }); area.style.minHeight = h + "px";
     };
     const front = (w) => { wins.forEach(x => x.classList.remove("active")); w.classList.add("active"); w.style.zIndex = String(++st.z); };
     const clampX = (x, w) => Math.max(0, Math.min(x, Math.max(0, area.clientWidth - Math.min(w, area.clientWidth))));
@@ -1244,7 +1207,7 @@ body.simple #ptnPill{display:none}
       const width = st.zoom[it.key] ? area.clientWidth : Math.min(it.width, area.clientWidth || it.width);
       w.style.width = width + "px";
       let pos = st.pos[it.key];
-      if (!pos){ const n = st.n++ % 7; const x0 = Math.max(16, Math.round(((area.clientWidth || width) - width) / 2)); pos = n === 0 ? {x: x0, y: 8} : {x: Math.max(0, x0 - 140) + n * 38, y: 20 + n * 34}; st.pos[it.key] = pos; }
+      if (!pos){ const n = st.n++ % 7; pos = {x: 16 + n * 38, y: 12 + n * 34}; st.pos[it.key] = pos; }
       w.style.left = clampX(pos.x, width) + "px"; w.style.top = Math.max(0,pos.y) + "px";
       w.style.setProperty("--tilt", ((it.key.charCodeAt(it.key.length-1) % 5) - 2) * 0.45 + "deg");
       if (st.shade[it.key]) w.classList.add("shaded");
@@ -1338,36 +1301,32 @@ body.simple #ptnPill{display:none}
     const index = new Map(), ref = {};
     const items = [];
 
-    items.push({key:"info", icon:"info", label:`${cityLc} info`, width:540, build(){
+    items.push({key:"info", icon:"doc", label:`${cityLc} info`, width:520, build(){
       const tag = el("span"); tag.textContent = `${fmtDate(p.date)}${p.venue ? " · " + p.venue : ""}`;
       if (isNew(p)) tag.append(el("span","new blink","NEW!!"));
       const cw = mkWin(`${cityLc}`, tag, nItems(photos.length + phone.length + videos.length + (recap?1:0)));
       const head = el("div","cityhead");
       head.append(el("h3",null,cityLc), el("span","when",[fmtDate(p.date), p.venue].filter(Boolean).join("   ·   ")));
-      cw.body.classList.add("paper");
-      const sk = slug(p.city);
-      if (SKY[sk]){ const art = el("div","riso-art"); art.style.setProperty("--sky", `url("${SKY[sk]}")`); art.append(el("span","rt", cityLc + " · " + shortDate(p.date))); cw.body.append(art); }
-      cw.body.append(head);
-      if (p.line || canEdit){
-        const line = el("div","line bub"); line.append(miniAvatar());
-        const lp = el("p"); lp.append(el("span","who","Lillenskap posted:"));
-        if (p.line) lp.append(document.createTextNode(p.line)); else lp.append(el("span","ph","[his line for this city]"));
-        line.append(lp); cw.body.append(line);
-      }
-      const kv = el("dl","ginfo");
-      const add = (k, v) => { kv.append(el("dt",null,k + ":"), el("dd",null,v)); };
-      add("Where", p.venue || "—"); add("Show", fmtDate(p.date) || "—");
-      add("Size", isLocked(p) && !canEdit ? "locked until show day" : nItems(photos.length + phone.length + videos.length + mediaList(p.polaroids).length + (recap?1:0)));
-      cw.body.append(kv);
-      if (p.comment || canEdit){
-        const c = el("div","gi-c"); c.append(el("span","gi-l","Comments:"));
-        const box = el("div","gi-box"); if (p.comment) box.textContent = p.comment; else box.append(el("span","ph","[your comment for this city: add it in the panel]"));
-        c.append(box); cw.body.append(c);
-      }
+      const line = el("div","line"); line.style.marginBottom = "0"; line.append(miniAvatar());
+      const lp = el("p"); lp.append(el("span","who","Lillenskap posted:"));
+      if (p.line) lp.append(document.createTextNode(p.line)); else lp.append(el("span","ph","[his line for this city]"));
+      line.append(lp); cw.body.append(head, line);
       if (canEdit && db) cw.body.append(deleteRow(id));
       return cw.w;
     }});
     const photoGrid = photos.length ? mediaGrid(photos, "IMG", "grid", cityLc, id, "photos", index, ref) : null;
+    items.push({key:"getinfo", icon:"info", label:"Get Info", width:380, build(){
+      const w = mkWin(`${cityLc} Info`, null, null);
+      const kv = el("dl","ginfo");
+      const add = (k, v) => { kv.append(el("dt",null,k + ":"), el("dd",null,v)); };
+      add("Kind", "Show"); add("Where", p.venue || "—"); add("Opened", fmtDate(p.date) || "—");
+      add("Size", isLocked(p) && !canEdit ? "locked" : nItems(photos.length + phone.length + videos.length + mediaList(p.polaroids).length));
+      w.body.append(kv);
+      const c = el("div","gi-c"); c.append(el("span","gi-l","Comments:"));
+      const box = el("div","gi-box"); if (p.comment) box.textContent = p.comment; else if (canEdit) box.append(el("span","ph","[your comment for this city: add it in the panel]")); else box.textContent = "";
+      c.append(box); w.body.append(c);
+      return w.w;
+    }});
     items.push({key:"photos", icon:"folder", label:"Photos", badge:photos.length, width:640, build(){
       const pw = mkWin(`${cityLc} · Photos`, photos.length ? null : el("span","soon","coming soon"), nItems(photos.length));
       if (photos.length) pw.body.append(mediaGrid(photos, "IMG", "grid", cityLc, id, "photos", index, ref));
@@ -1607,11 +1566,11 @@ body.simple #ptnPill{display:none}
     home: [
       {k:"t1", kind:"ticket", stop:0, x:.02, y:250, r:-8, desk:1},
       {k:"t2", kind:"ticket", stop:1, x:.70, y:600, r:6, desk:1},
-      {k:"pick", kind:"pick", x:.55, y:300, r:18, desk:1},
+      {k:"pick", kind:"pick", x:.55, y:300, r:18},
       {k:"s1", kind:"star", x:.03, y:20, r:-12},
       {k:"s2", kind:"holo", x:.62, y:120, r:10, desk:1},
       {k:"burst", kind:"burst", x:.84, y:420, r:0},
-      {k:"vip", kind:"vip", x:.76, y:800, r:12, desk:1},
+      {k:"vip", kind:"vip", x:.48, y:1000, r:12, desk:1},
       {k:"tape1", kind:"tape", x:.01, y:62, r:-35, desk:1},
     ],
     "chicago": [{k:"tk", kind:"img", src:"/_blob/c165c7001581cd745f3a1970e860ab0c", x:0.7, y:150, w:170, r:6, desk:1},{k:"dog", kind:"img", src:"/_blob/a53c33d666b270abad94cc3330add5ce", x:0.76, y:560, w:150, r:9}],
@@ -2284,18 +2243,21 @@ body.simple #ptnPill{display:none}
       box.append(adminView()); return;
     }
     if (cur === "hd" && state === "ready"){
+      const bb = el("div","backbar"); const back = el("a","btn","◀ all cities"); back.href = "#all"; bb.append(back); box.append(bb);
       box.append(hdDesk()); return;
     }
     if (cur === "camera-roll" && state === "ready"){
+      const bb = el("div","backbar"); const back = el("a","btn","◀ all cities"); back.href = "#all"; bb.append(back); box.append(bb);
       box.append(rollDesk()); return;
     }
     if (cur === "trash" && state === "ready"){
+      const bb = el("div","backbar"); const back = el("a","btn","◀ all cities"); back.href = "#all"; bb.append(back); box.append(bb);
       box.append(trashDesk()); return;
     }
     if (cur && state === "ready"){
+      const bb = el("div","backbar"); const back = el("a","btn","◀ all cities"); back.href = "#all"; bb.append(back); box.append(bb);
       const match = posts.filter(p => slug(p.data.city) === cur);
       if (!match.length){
-        const bb = el("div","backbar"); const back = el("a","btn","◀ all cities"); back.href = "#all"; bb.append(back); box.append(bb);
         const w = el("section","win"); const b = el("div","body"); const a = el("div","alert");
         a.append(el("div","stop","?")); const m = el("p",null,"Lillenskap hasn't been to that city. Pick one from the tour list."); m.style.margin = "6px 0 0"; a.append(m); b.append(a); w.append(b); box.append(w);
         return;
@@ -2310,7 +2272,7 @@ body.simple #ptnPill{display:none}
       a.append(el("div","stop", state === "error" ? "!" : "i"));
       const msg = state === "loading" ? "Opening Tour…" :
         state === "error" ? "The disk “Tour” couldn't be read. Reload the page to try again." :
-        state === "offline" ? "Couldn't reach the tour files. Reload the page to try again." :
+        state === "offline" ? "City posts show up here once you're signed in to claude.ai." :
         canEdit ? "No cities yet. Use the “Add City Post” window above to post the first one." :
         "Lillenskap hasn't posted a city yet. Check back after the next show.";
       a.append(el("p",null,msg)); a.lastChild.style.margin = "6px 0 0"; b.append(a); w.append(tb,b); box.append(w); return;
