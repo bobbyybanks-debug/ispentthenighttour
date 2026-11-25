@@ -181,9 +181,29 @@ button.frame:hover{outline:2px solid var(--hot2);outline-offset:1px}
   .dicon{width:76px}
 }
 /* desktop junk: fixed stickers, nobody can move them */
-.junkwide{position:absolute;left:0;top:0;width:100%;height:0;z-index:31;pointer-events:none}
+.junkwide{position:absolute;left:0;top:0;width:100%;height:0;z-index:7;pointer-events:none}
+/* Finder: every folder/file opens as a window on the one desktop (under the menu bar, like a Mac) */
+.flayer{position:absolute;left:0;top:0;width:100%;height:0;z-index:8}
+.flayer .cdesk{display:block}
+.flayer .cdesk > .cicons,.flayer .cdesk > .cctl,.flayer .cdesk > .chint{display:none}
+.flayer .carea{position:absolute;left:0;top:0;width:100%;height:0;min-height:0!important;pointer-events:none}
+.flayer .float{pointer-events:auto}
+.fgrid{display:flex;flex-wrap:wrap;gap:16px 10px;align-items:flex-start;padding:2px 0}
+.fgrid .dicon{width:92px}
+.fgrid .icon span,.tourgrid .icon span{background:none!important;color:var(--ink)!important}
+.fgrid .icon:hover span,.fgrid .icon:focus-visible span,.tourgrid .icon:hover span,.tourgrid .icon:focus-visible span{background:var(--sel)!important;color:#fff!important}
+.fgrid .icon:focus-visible,.tourgrid .icon:focus-visible{outline:none}
+.fpath{font-family:var(--f-sys);font-size:11px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;min-width:0}
+.fnote{margin:0 0 12px;font-family:var(--f-type);font-size:14px;text-transform:lowercase}
+.fsect{margin:14px 0 8px;font-family:var(--f-sys);font-size:12px;border-bottom:1px dotted var(--plat-lo);padding-bottom:3px}
+.fsect:first-child{margin-top:0}
+.tourgrid{display:flex;flex-wrap:wrap;gap:18px 26px;justify-content:center;padding:6px 0 2px}
+.tourgrid .dicon{width:150px}
+.tourgrid .ico.folder{transform:scale(1.35);transform-origin:center bottom;margin-bottom:8px}
+.tourgrid .tsub{display:block;margin-top:3px;font-family:var(--f-type);font-size:12px;text-transform:lowercase;color:#333;background:none!important}
+@media (max-width:720px){.flayer{z-index:95}.tourgrid .dicon{width:120px}}
 .jw{position:absolute;display:block;height:auto;image-rendering:pixelated;filter:drop-shadow(2px 3px 0 rgba(0,0,0,.45));pointer-events:none}
-.junk{position:absolute;inset:0;pointer-events:none;z-index:31}
+.junk{position:absolute;inset:0;pointer-events:none;z-index:7}
 .junk-p{position:absolute;pointer-events:none;touch-action:none;user-select:none;-webkit-user-select:none;transform:rotate(var(--rot,0deg));filter:drop-shadow(2px 3px 0 rgba(0,0,0,.45));transition:filter .1s}
 .junk-p svg{display:block;width:100%;height:auto}
 .jk-star,.jk-holo{width:54px}.jk-burst{width:96px}.jk-burst svg{animation:gspin 4s steps(12) infinite}
@@ -514,6 +534,10 @@ body:not([data-city]) .icon span,body[data-city=""] .icon span{background:#1b144
 .marq{overflow:hidden;background:var(--ink);border:2px inset var(--plat);color:var(--hot2);font-family:var(--f-type);font-size:21px;text-transform:lowercase;white-space:nowrap;padding:4px 0}
 .marq .track{display:inline-block;padding-left:100%;animation:scroll var(--dur,40s) linear infinite}
 .marq .sep{color:var(--hot);margin:0 18px}
+.marq .mlink{color:inherit;text-decoration:none}
+.marq .mlink:hover,.marq .mlink:focus-visible{text-decoration:underline;outline:none}
+.count a.c{text-decoration:none}
+.count a.c:hover{text-decoration:underline}
 @keyframes scroll{to{transform:translateX(-100%)}}
 
 /* countdown */
@@ -676,6 +700,7 @@ body:not([data-city]) .icon span,body[data-city=""] .icon span{background:#1b144
 </div>
 
 <div class="junkwide" id="junkwide" aria-hidden="true"></div>
+<div class="flayer" id="finderLayer"></div>
 <div class="desktop">
   <div class="junk" id="junk" aria-hidden="true"></div>
   <main class="stack">
@@ -773,7 +798,6 @@ body:not([data-city]) .icon span,body[data-city=""] .icon span{background:#1b144
 
   <nav class="icons" aria-label="Desktop">
     <a class="icon" href="#hd" id="hdIcon"><i class="ico hd"></i><span>Lillenskap HD</span></a>
-    <a class="icon" href="#camera-roll" id="rollIcon"><i class="ico cam"></i><span>Camera Roll</span></a>
     <span id="cityIcons" style="display:contents"></span>
     <a class="icon" href="#trash" id="trashIcon"><i class="ico trash"></i><span>Trash</span></a>
   </nav>
@@ -926,7 +950,7 @@ body:not([data-city]) .icon span,body[data-city=""] .icon span{background:#1b144
     if (!stops.length) { t.textContent = "★ TOUR DATES COMING SOON ★ LILLENSKAP IS UPLOADING ★"; return; }
     stops.forEach((s, i) => {
       if (i) t.append(el("span","sep","★"));
-      t.append(document.createTextNode([s.date, s.city, s.venue].filter(Boolean).join(" — ").toUpperCase()));
+      const a = el("a","mlink", [s.date, s.city, s.venue].filter(Boolean).join(" — ").toUpperCase()); a.href = "#" + slug(s.city); t.append(a);
     });
     t.parentElement.style.setProperty("--dur", Math.max(25, stops.length * 7) + "s");
   }
@@ -954,7 +978,7 @@ body:not([data-city]) .icon span,body[data-city=""] .icon span{background:#1b144
     box.hidden = false;
     if (!next){ box.append(el("span","k","TOUR'S OVER"), el("span","d","thank u for spending the night")); return; }
     const days = Math.round((next.day - t) / 864e5);
-    box.append(el("span","k","NEXT STOP:"), el("span","c", String(next.city || "TBA")));
+    const cl = el("a","c", String(next.city || "TBA")); cl.href = "#" + slug(next.city); box.append(el("span","k","NEXT STOP:"), cl);
     const d = el("span","d");
     if (days === 0) { const b = el("b",null,"TONIGHT"); b.className = "blink"; d.append(b); }
     else if (days === 1) d.append(el("b",null,"TOMORROW"));
@@ -965,8 +989,8 @@ body:not([data-city]) .icon span,body[data-city=""] .icon span{background:#1b144
   function applyShowNight(){
     const cur = currentCity(), t = today0();
     const tonight = cityList().find(c => c.day && +c.day === +t);
-    document.body.classList.toggle("shownight", !!tonight && !cur);
-    if (!cur) document.body.dataset.city = tonight ? tonight.slug : "";
+    document.body.classList.toggle("shownight", !!tonight && !cur && !finderCity);
+    if (!cur) document.body.dataset.city = finderCity || (tonight ? tonight.slug : "");
   }
   let fanSig = "";
   setInterval(() => {
@@ -1199,8 +1223,8 @@ body:not([data-city]) .icon span,body[data-city=""] .icon span{background:#1b144
   const floatMode = () => matchMedia("(min-width:721px)").matches;
   const isVidM = (m) => String(m.type||"").startsWith("video/");
 
-  function makeDesk(stateKey, label, items, mediaIndex){
-    const st = deskState[stateKey] || (deskState[stateKey] = {open:[items[0].key], pos:{}, shade:{}, zoom:{}, z:20, n:0, touched:false});
+  function makeDesk(stateKey, label, items, mediaIndex, opts = {}){
+    const st = deskState[stateKey] || (deskState[stateKey] = {open: opts.finder ? [] : [items[0].key], pos:{}, shade:{}, zoom:{}, z:20, n:0, touched:false});
     if (pendingOpen && pendingOpen.desk === stateKey){ if (!st.open.includes(pendingOpen.key)) st.open.push(pendingOpen.key); st.touched = true; pendingOpen = null; }
 
     const root = el("div","cdesk");
@@ -1236,7 +1260,7 @@ body:not([data-city]) .icon span,body[data-city=""] .icon span{background:#1b144
       if (!floatMode()){ area.style.minHeight = ""; return; }
       let h = 520; wins.forEach(w => { h = Math.max(h, w.offsetTop + w.offsetHeight + 40); }); area.style.minHeight = h + "px";
     };
-    const front = (w) => { wins.forEach(x => x.classList.remove("active")); w.classList.add("active"); w.style.zIndex = String(++st.z); };
+    const front = (w) => { wins.forEach(x => x.classList.remove("active")); w.classList.add("active"); w.style.zIndex = String(++st.z); if (opts.onFront) opts.onFront(w.dataset.key); };
     const clampX = (x, w) => Math.max(0, Math.min(x, Math.max(0, area.clientWidth - Math.min(w, area.clientWidth))));
 
     const lockScroll = () => { document.documentElement.style.overflow = (!floatMode() && wins.size) ? "hidden" : ""; };
@@ -1251,7 +1275,7 @@ body:not([data-city]) .icon span,body[data-city=""] .icon span{background:#1b144
       if (isMedia) w.classList.add("mediawin");
       let pos = st.pos[it.key];
       let popN = 0;
-      if (isMedia && floatMode()){
+      if ((isMedia || opts.finder) && floatMode() && !(opts.finder && st.dragged && st.dragged[it.key])){
         // pop up where the viewer is looking, not down the stack
         popN = (st.mpop = ((st.mpop || 0) + 1)) % 5;
         const ar = area.getBoundingClientRect();
@@ -1292,7 +1316,7 @@ body:not([data-city]) .icon span,body[data-city=""] .icon span{background:#1b144
       const w = wins.get(k); if (!w) return;
       w.remove(); wins.delete(k); st.open = st.open.filter(x => x !== k);
       // bring the next window back to the front (on phones this is the back-stack)
-      let top = null; wins.forEach(x => { if (!top || +x.style.zIndex > +top.style.zIndex) top = x; }); if (top) front(top);
+      let top = null; wins.forEach(x => { if (!top || +x.style.zIndex > +top.style.zIndex) top = x; }); if (top) front(top); else if (opts.onFront) opts.onFront(null);
       lockScroll();
       const ic = iconEls.get(k); if (ic){ ic.classList.remove("isopen"); ic.setAttribute("aria-pressed","false"); }
       fit();
@@ -1318,7 +1342,7 @@ body:not([data-city]) .icon span,body[data-city=""] .icon span{background:#1b144
         w.classList.add("dragging");
         const move = (ev) => {
           const x = clampX(ox + ev.clientX - sx, w.offsetWidth), y = Math.max(0, oy + ev.clientY - sy);
-          w.style.left = x + "px"; w.style.top = y + "px"; st.pos[it.key] = {x, y};
+          w.style.left = x + "px"; w.style.top = y + "px"; st.pos[it.key] = {x, y}; (st.dragged || (st.dragged = {}))[it.key] = true;
         };
         const up = () => { w.classList.remove("dragging"); tb.removeEventListener("pointermove", move); tb.removeEventListener("pointerup", up); tb.removeEventListener("pointercancel", up); fit(); };
         tb.addEventListener("pointermove", move); tb.addEventListener("pointerup", up); tb.addEventListener("pointercancel", up);
@@ -1346,7 +1370,7 @@ body:not([data-city]) .icon span,body[data-city=""] .icon span{background:#1b144
       keep.forEach(k => openWin(itemFor(k), false));
     });
     root.addEventListener("keydown", (e) => { if (e.key === "Escape" && !floatMode()){ let top = null; wins.forEach(x => { if (!top || +x.style.zIndex > +top.style.zIndex) top = x; }); if (top) closeWin(top.dataset.key); } });
-    return {root, open: (k) => openWin(itemFor(k), true)};
+    return {root, open: (k) => openWin(itemFor(k), true), has: (k) => !!itemFor(k)};
   }
 
   // grid of clickable tiles; registers each file in the desk's media index
@@ -1582,6 +1606,276 @@ body:not([data-city]) .icon span,body[data-city=""] .icon span{background:#1b144
     const d = makeDesk("__trash", "trash", items, index); ref.d = d;
     return d.root;
   }
+
+  /* ===================== FINDER: the site works like Lillenskap's computer =====================
+     Desktop: Lillenskap HD, the date folders ("11.30 chicago"), Trash.
+     Lillenskap HD ▸ Tour ▸ 11.30 chicago ▸ Photos / iPhone / Polaroids / Recaps / chicago info / Trash
+     Lillenskap HD ▸ Camera Roll (every photo, newest show first) · DO NOT OPEN · System Folder · ReadMe.txt
+     Every folder and file opens as a window on the one desktop. Links (#chicago, #hd, #trash, #camera-roll, #tour)
+     open the same windows, so a shared link lands on the desktop with that folder open. */
+  const PAGES = new Set(["admin","post"]);
+  const SPECIAL = {"hd":"hd", "lillenskap-hd":"hd", "camera-roll":"roll", "roll":"roll", "trash":"trash", "tour":"tour", "all":"tour", "do-not-open":"stash"};
+  const hashSlug = () => { let h = ""; try { h = decodeURIComponent(location.hash.slice(1)); } catch {} return slug(h); };
+  const finderKeyFor = (h) => (!h || PAGES.has(h)) ? null : (SPECIAL[h] || ("c:" + h));
+  const cityLabel = (c) => `${shortDate(c.date)} ${String(c.city || "").toLowerCase()}`.trim();
+  let finder = null, finderWanted = null, finderCity = null;
+  function openFinder(key){
+    if (!key) return;
+    if (!finder){ finderWanted = key; return; }
+    if (finder.has(key)) { finder.open(key); return; }
+    const name = key.startsWith("c:") ? key.slice(2).replace(/-/g, " ") : key;
+    macDialog("Finder", (body) => { const a = el("div","alert"); a.append(el("div","stop","?")); const m = el("p",null,`Lillenskap hasn't been to “${name}”. Pick a date folder from the Tour.`); m.style.margin = "6px 0 0"; a.append(m); body.append(a); });
+  }
+  function setHashFor(key){
+    const m = String(key).match(/^c:([^/]+)$/);
+    const h = m ? m[1] : ({hd:"hd", roll:"camera-roll", trash:"trash", tour:"tour", stash:"do-not-open"})[key];
+    if (h) { try { history.replaceState(null, "", "#" + h); } catch {} }
+  }
+  function tourWin(){
+    const list = cityList();
+    const w = el("section","win tourwin");
+    const tb = el("div","tb"); tb.append(el("i","box")); const t = el("div","ttl"); const s = el("span"); s.textContent = "Tour"; t.append(s); tb.append(t, el("i","box"));
+    const info = el("div","info"); info.append(el("span","fpath","Lillenskap HD ▸ Tour"), el("span",null, `${list.length} show${list.length === 1 ? "" : "s"}`));
+    const body = el("div","body"); const g = el("div","tourgrid");
+    list.forEach(c => {
+      const r = posts.find(x => slug(x.data.city) === c.slug);
+      const b = el("button","icon dicon"); b.type = "button"; b.setAttribute("aria-label", `Open ${cityLabel(c)}`);
+      const ic = el("i","ico folder");
+      const locked = r && isLocked(r.data);
+      if (locked) ic.append(el("span","lockb"));
+      const n = r ? mediaList(r.data.photos).length + mediaList(r.data.phone).length + mediaList(r.data.polaroids).length + ytList(r.data.videos).length + (r.data.recap ? 1 : 0) : 0;
+      if (!locked && n) ic.append(el("em","nbadge", String(n)));
+      const sub = !r ? "coming soon" : locked ? (unlockText(r.data).replace(/\.$/, "").toLowerCase()) : isNew(r.data) ? "new!!" : (r.data.venue || "").toLowerCase();
+      const lab = el("span",null,cityLabel(c));
+      b.append(ic, lab, el("span","tsub",sub));
+      b.addEventListener("click", () => { setHashFor("c:" + c.slug); openFinder("c:" + c.slug); });
+      g.append(b);
+    });
+    if (!list.length) g.append(el("p","fnote","no shows yet."));
+    body.append(g); w.append(tb, info, body); return w;
+  }
+  function finderDesk(){
+    const index = new Map(), ref = {}, items = [];
+    const add = (it) => { items.push(it); return it; };
+    const cities = cityList().map(c => ({...c, rec: posts.find(x => slug(x.data.city) === c.slug)}));
+    const iconGrid = (kids) => {
+      const g = el("div","cicons fgrid");
+      kids.forEach(k => {
+        const b = el("button","icon dicon"); b.type = "button"; b.setAttribute("aria-label", "Open " + k.label);
+        const ic = el("i","ico " + k.icon);
+        if (k.badge) ic.append(el("em","nbadge", String(k.badge)));
+        if (k.locked){ ic.append(el("span","lockb")); b.classList.add("locked"); }
+        b.append(ic, el("span",null,k.label));
+        b.addEventListener("click", () => { setHashFor(k.key); ref.d && ref.d.open(k.key); });
+        g.append(b);
+      });
+      return g;
+    };
+    const pathEl = (txt) => el("span","fpath", txt);
+    const folderWin = (title, path, kids, note) => {
+      const w = mkWin(title, pathEl(path), nItems(kids.length));
+      if (note) w.body.append(note);
+      w.body.append(iconGrid(kids)); return w.w;
+    };
+    const register = (list, where, postId, field) => list.forEach((m, i) => {
+      const onDelete = (canEdit && db) ? (mm) => removeFrom(postId, field, x => x.id === mm.id) : null;
+      index.set("m:" + m.id, {m, name: m.name || `IMG_${String(i+1).padStart(4,"0")}`, where, vid:isVidM(m), onDelete});
+    });
+
+    // ---- Lillenskap HD
+    const stashUnlocked = canEdit || stashOpen;
+    add({key:"hd", width:540, build(){ return folderWin("Lillenskap HD", "desktop", [
+      {key:"tour", icon:"folder", label:"Tour", badge: cities.length},
+      {key:"roll", icon:"cam", label:"Camera Roll"},
+      {key:"stash", icon:"folder", label:"DO NOT OPEN", locked: !stashUnlocked},
+      {key:"sys", icon:"folder", label:"System Folder"},
+      {key:"readme", icon:"doc", label:"ReadMe.txt"},
+      ...(canEdit ? [{key:"pt", icon:"cam", label:"Post Tonight"}, {key:"cp", icon:"cp", label:"Control Panels"}] : [])
+    ]); }});
+    add({key:"tour", width:540, build(){ return folderWin("Tour", "Lillenskap HD", cities.map(c => ({key:"c:" + c.slug, icon:"folder", label: cityLabel(c), locked: !!(c.rec && isLocked(c.rec.data))}))); }});
+
+    // ---- one folder per show, named by date
+    cities.forEach(c => {
+      const base = "c:" + c.slug, label = cityLabel(c), path = "Lillenskap HD ▸ Tour";
+      if (!c.rec){ add({key: base, width:420, build(){ const w = mkWin(label, pathEl(path), "empty"); w.body.append(el("p","empty-trash","Nothing posted for this show yet.")); return w.w; }}); return; }
+      const p = c.rec.data, id = c.rec.id, cityLc = String(p.city || "").toLowerCase();
+      const here = `${path} ▸ ${label}`;
+      const photos = mediaList(p.photos), phone = mediaList(p.phone), outtakes = mediaList(p.trash), videos = ytList(p.videos);
+      const polas = mediaList(p.polaroids).map((m, i, a) => ({...m, name: m.caption || `${cityLc} ${shortDate(p.date)}${a.length > 1 ? " #" + (i+1) : ""}`}));
+      const recap = p.recap && typeof p.recap.id === "string" ? p.recap : null;
+      const lockedAll = isLocked(p), locked = lockedAll && !canEdit;
+      const nRec = videos.length + (recap ? 1 : 0);
+      const where = (f) => `${label} ▸ ${f}`;
+      if (!locked){
+        register(photos, where("Photos"), id, "photos"); register(phone, where("iPhone"), id, "phone");
+        register(polas, where("Polaroids"), id, "polaroids"); register(outtakes, where("Trash"), id, "trash");
+      }
+      const kids = [
+        {key: base + "/photos", icon:"folder", label:"Photos", badge: locked ? 0 : photos.length, locked: lockedAll},
+        {key: base + "/phone", icon:"folder", label:"iPhone", badge: locked ? 0 : phone.length, locked: lockedAll},
+        {key: base + "/pola", icon:"pola", label:"Polaroids", badge: locked ? 0 : polas.length, locked: lockedAll},
+        {key: base + "/recaps", icon:"folder", label:"Recaps", badge: locked ? 0 : nRec, locked: lockedAll},
+        {key: base + "/info", icon:"doc", label:`${cityLc} info`},
+        {key: base + "/trash", icon:"trash" + (outtakes.length && !locked ? " full" : ""), label:"Trash", badge: locked ? 0 : outtakes.length, locked: lockedAll}
+      ];
+      add({key: base, width:600, build(){
+        let note = null;
+        if (lockedAll){ note = el("p","fnote", canEdit ? `locked for fans until ${shortDate(p.date)} · you can still open everything` : `${unlockText(p).toLowerCase()} the folders open on show day.`); }
+        else if (isNew(p)){ note = el("p","fnote"); note.append(el("span","new blink","NEW!!"), " fresh from the show"); }
+        return folderWin(label, path, kids, note);
+      }});
+      const lockedWin = (name) => () => { const w = mkWin(`“${name}” is locked`, pathEl(here), "locked"); w.body.append(lockAlert(`${label} opens on show day. ${unlockText(p)}`)); return w.w; };
+      const mediaFolder = (key, name, list, prefix, cls, field, width, empty) => add({key, width, build: locked ? lockedWin(name) : () => {
+        const w = mkWin(`${label} ▸ ${name}`, pathEl(here), nItems(list.length));
+        if (list.length) w.body.append(mediaGrid(list, prefix, cls, where(name), id, field, index, ref));
+        else w.body.append(el("p","empty-trash", empty));
+        return w.w;
+      }});
+      mediaFolder(base + "/photos", "Photos", photos, "IMG", "grid", "photos", 640, "No photos yet.");
+      mediaFolder(base + "/phone", "iPhone", phone, "IMG_E", "grid tall", "phone", 540, "No iPhone pics yet.");
+      mediaFolder(base + "/pola", "Polaroids", polas, "POLA", "grid pola", "polaroids", 620, "No polaroids yet.");
+      mediaFolder(base + "/trash", "Trash", outtakes, "OUTTAKE", "grid", "trash", 560, "The Trash is empty.");
+      // recaps: a folder of movie files
+      const files = [...(recap ? [{key: base + "/vf", icon:"movie", label:"RECAP.MOV"}] : []), ...videos.map((u, i) => ({key: base + "/v" + i, icon:"movie", label:`RECAP_${String(i+1).padStart(2,"0")}.MOV`}))];
+      add({key: base + "/recaps", width:480, build: locked ? lockedWin("Recaps") : () => {
+        const w = mkWin(`${label} ▸ Recaps`, pathEl(here), nItems(files.length));
+        if (files.length) w.body.append(iconGrid(files)); else w.body.append(el("p","empty-trash","Recap coming soon."));
+        return w.w;
+      }});
+      if (recap && !locked) add({key: base + "/vf", width:460, build(){ const vw = mkWin("RECAP.MOV", pathEl(where("Recaps")), "uploaded"); vw.body.classList.add("vbody"); vw.body.append(player(blob(recap.id))); vw.w.classList.add("mediawin"); return vw.w; }});
+      if (!locked) videos.forEach((u, i) => {
+        const name = `RECAP_${String(i+1).padStart(2,"0")}.MOV`;
+        add({key: base + "/v" + i, width:420, build(){
+          const vw = mkWin(name, pathEl(where("Recaps")), "youtube"); vw.body.classList.add("vbody");
+          const a = el("a","qt big"); a.href = u; a.target = "_blank"; a.rel = "noopener noreferrer";
+          a.setAttribute("aria-label", `Watch ${p.city || "city"} recap ${i+1} on YouTube`);
+          const scr = el("div","scr"); scr.append(el("span","lbl", name), el("span","play"));
+          const bar = el("div","bar"); bar.append(el("span",null,"watch on youtube ↗"), el("span",null,"00:00 / --:--"));
+          a.append(scr, bar); vw.body.append(a);
+          if (canEdit && db){ const row = el("div","actions"); row.style.marginTop = "8px"; row.append(trashBtn(name, () => removeFrom(id, "videos", x => x === u))); vw.body.append(row); }
+          return vw.w;
+        }});
+      });
+      // the info file: his line, where and when, the crew's comment
+      add({key: base + "/info", width:520, build(){
+        const w = mkWin(`${cityLc} info`, pathEl(here), "simpletext");
+        const head = el("div","cityhead"); head.append(el("h3",null,cityLc), el("span","when",[fmtDate(p.date), p.venue].filter(Boolean).join("   ·   ")));
+        w.body.append(head);
+        if (p.line || canEdit){
+          const line = el("div","line"); line.append(miniAvatar());
+          const lp = el("p"); lp.append(el("span","who","Lillenskap posted:"));
+          if (p.line) lp.append(document.createTextNode(p.line)); else lp.append(el("span","ph","[his line for this city]"));
+          line.append(lp); w.body.append(line);
+        }
+        const kv = el("dl","ginfo");
+        const kvAdd = (k, v) => { kv.append(el("dt",null,k + ":"), el("dd",null,v)); };
+        kvAdd("Kind", "Show"); kvAdd("Where", p.venue || "—"); kvAdd("Date", fmtDate(p.date) || "—");
+        kvAdd("Size", locked ? "locked until show day" : nItems(photos.length + phone.length + polas.length + nRec));
+        w.body.append(kv);
+        if (p.comment || canEdit){
+          const cm = el("div","gi-c"); cm.append(el("span","gi-l","Comments:"));
+          const bx = el("div","gi-box"); if (p.comment) bx.textContent = p.comment; else bx.append(el("span","ph","[your comment for this city: add it in the panel]"));
+          cm.append(bx); w.body.append(cm);
+        }
+        if (canEdit && db) w.body.append(deleteRow(id));
+        return w.w;
+      }});
+    });
+
+    // ---- Camera Roll: every photo, iPhone pic and polaroid, newest show first, one section per date
+    const rollGroups = cities.filter(c => c.rec).slice().reverse().map(c => {
+      const p = c.rec.data, list = [];
+      if (isLocked(p) && !canEdit) return null;
+      [["photos","IMG"],["phone","IMG_E"],["polaroids","polaroid"]].forEach(([f]) => mediaList(p[f]).forEach(m => list.push({m, f})));
+      return list.length ? {c, id: c.rec.id, list} : null;
+    }).filter(Boolean);
+    const rollN = rollGroups.reduce((n, g) => n + g.list.length, 0);
+    add({key:"roll", width:780, build(){
+      const w = mkWin("Camera Roll", pathEl("Lillenskap HD"), nItems(rollN));
+      if (!rollN){ w.body.append(el("p","empty-trash","No photos yet. They show up here after each show.")); return w.w; }
+      rollGroups.forEach(g => {
+        w.body.append(el("div","fsect", cityLabel(g.c).toUpperCase()));
+        const grid = el("div","grid roll");
+        g.list.forEach(({m, f}, i) => {
+          const onDelete = (canEdit && db) ? (mm) => removeFrom(g.id, f, x => x.id === mm.id) : null;
+          if (!index.has("m:" + m.id)) index.set("m:" + m.id, {m, name: m.name || "IMG", where:"Camera Roll", vid:isVidM(m), onDelete});
+          grid.append(tile(m, i, "IMG", {onOpen: () => ref.d && ref.d.open("m:" + m.id), onDelete}));
+        });
+        w.body.append(grid);
+      });
+      return w.w;
+    }});
+
+    // ---- the desktop Trash: every show's outtakes, grouped by date
+    const trashGroups = cities.filter(c => c.rec && !(isLocked(c.rec.data) && !canEdit) && mediaList(c.rec.data.trash).length);
+    const trashN = trashGroups.reduce((n, c) => n + mediaList(c.rec.data.trash).length, 0);
+    add({key:"trash", width:680, build(){
+      const w = mkWin("Trash", pathEl("desktop"), nItems(trashN));
+      if (!trashN) w.body.append(el("p","empty-trash","The Trash is empty."));
+      trashGroups.forEach(c => {
+        w.body.append(el("div","fsect", cityLabel(c).toUpperCase()));
+        w.body.append(mediaGrid(mediaList(c.rec.data.trash), "OUTTAKE", "grid", `${cityLabel(c)} ▸ Trash`, c.rec.id, "trash", index, ref));
+      });
+      return w.w;
+    }});
+
+    // ---- DO NOT OPEN (password)
+    const stashList = stash.map((m, i) => ({...m, name: m.name || `STASH_${String(i+1).padStart(3,"0")}`}));
+    if (stashUnlocked) stashList.forEach(m => index.set("m:" + m.id, {m, name:m.name, where:"Lillenskap HD ▸ DO NOT OPEN", vid:isVidM(m), onDelete:(canEdit && db) ? (mm) => removeStash(mm.id) : null}));
+    add({key:"stash", width:640, build(){
+      if (!stashUnlocked){
+        const w = mkWin("DO NOT OPEN", pathEl("Lillenskap HD"), "locked");
+        const f = el("form","form pass"); f.setAttribute("autocomplete","off");
+        const row = el("div","alert"); row.append(el("span","lockb big"));
+        const lab = el("label"); lab.htmlFor = "passIn"; lab.textContent = "Enter the password for “DO NOT OPEN”:";
+        const inp = el("input"); inp.type = "password"; inp.id = "passIn"; inp.autocomplete = "off";
+        const col = el("div"); col.style.display = "grid"; col.style.gap = "6px"; col.style.flex = "1"; col.style.minWidth = "0"; col.append(lab, inp);
+        row.append(col);
+        const msg = el("span","status"); msg.setAttribute("role","status");
+        const act = el("div","actions"); const ok = el("button","btn def","OK"); ok.type = "submit"; act.append(msg, ok);
+        f.append(row, act);
+        f.addEventListener("submit", async (e) => {
+          e.preventDefault();
+          if (!stashHash){ msg.textContent = "This folder can't be opened yet."; return; }
+          const h = await sha(inp.value);
+          if (h === stashHash){ stashOpen = true; try { sessionStorage.setItem("isptn-stash","1"); } catch {} const st = deskState["__finder"]; if (st){ st.open = st.open.filter(k => k !== "stash"); st.open.push("stash"); } paintPosts(lastState); }
+          else { msg.textContent = "Wrong password."; w.w.classList.remove("shake"); void w.w.offsetWidth; w.w.classList.add("shake"); inp.select(); }
+        });
+        w.body.append(f);
+        setTimeout(() => { try { inp.focus({preventScroll:true}); } catch {} }, 0);
+        return w.w;
+      }
+      const w = mkWin("DO NOT OPEN", pathEl("Lillenskap HD"), nItems(stashList.length));
+      if (!stashList.length){ w.body.append(el("p","empty-trash", canEdit ? "Empty. Add files in the Secret Stash section of your panel." : "Nothing in here yet.")); return w.w; }
+      const g = el("div","grid");
+      stashList.forEach((m, i) => g.append(tile(m, i, "STASH", {onOpen: () => ref.d && ref.d.open("m:" + m.id), onDelete: (canEdit && db) ? (mm) => removeStash(mm.id) : null})));
+      w.body.append(g); return w.w;
+    }});
+
+    // ---- the rest of the hard drive
+    const sysRows = [["Finder","application"],["Lillenskap Prefs","document"],["Extensions","folder"],["Camera.ext","extension"],["Fonts","folder"],["Scrapbook","document"]];
+    add({key:"sys", width:420, build(){
+      const w = mkWin("System Folder", pathEl("Lillenskap HD"), nItems(sysRows.length));
+      const t = el("div","finder"); const h = el("div","frow fhead"); h.append(el("span",null,"Name"), el("span",null,"Kind")); t.append(h);
+      sysRows.forEach(([n, k]) => { const r = el("div","frow"); r.append(el("span",null,n), el("span",null,k)); t.append(r); });
+      w.body.append(t); return w.w;
+    }});
+    add({key:"readme", width:360, build(){ const w = mkWin("ReadMe.txt", pathEl("Lillenskap HD"), "simpletext"); w.body.append(el("div","readme")); return w.w; }});
+    if (canEdit){
+      add({key:"pt", width:300, build(){ const w = mkWin("Post Tonight", pathEl("Lillenskap HD"), null); const a = el("a","btn","Open Post Tonight ▸"); a.href = "#post"; w.body.append(a); return w.w; }});
+      add({key:"cp", width:300, build(){ const w = mkWin("Control Panels", pathEl("Lillenskap HD"), null); const a = el("a","btn","Open Control Panels ▸"); a.href = "#admin"; w.body.append(a); return w.w; }});
+    }
+
+    const d = makeDesk("__finder", "lillenskap hd", items, index, {finder:true, onFront: (key) => {
+      const m = key && String(key).match(/^c:([^/]+)/);
+      const next = m ? m[1] : null;
+      if (next !== finderCity){ finderCity = next; applyShowNight(); }
+    }});
+    ref.d = d; finder = d;
+    if (finderWanted){ const k = finderWanted; finderWanted = null; requestAnimationFrame(() => openFinder(k)); }
+    return d.root;
+  }
+
   function deleteRow(id){
     const a = el("div","actions"); a.style.marginTop = "14px";
     const st = el("span","status"); st.setAttribute("role","status");
@@ -2277,7 +2571,7 @@ body:not([data-city]) .icon span,body[data-city=""] .icon span{background:#1b144
 
   /* ---- city navigation: #chicago shows only Chicago; #all or no hash shows every city ---- */
   const slug = (s) => String(s || "").toLowerCase().normalize("NFKD").replace(/[^a-z0-9]+/g,"-").replace(/^-+|-+$/g,"");
-  const currentCity = () => { let h = ""; try { h = decodeURIComponent(location.hash.slice(1)); } catch {} h = slug(h); return h === "all" ? "" : h; };
+  const currentCity = () => { const h = hashSlug(); return PAGES.has(h) ? h : ""; };   // only the crew pages leave the desktop
   const shortDate = (s) => { const d = showDay(s); return d ? `${String(d.getMonth()+1).padStart(2,"0")}.${String(d.getDate()).padStart(2,"0")}` : ""; };
   function cityList(){
     const map = new Map();
@@ -2308,8 +2602,7 @@ body:not([data-city]) .icon span,body[data-city=""] .icon span{background:#1b144
     }
     // desktop folders
     const ic = $("cityIcons"); ic.textContent = "";
-    list.forEach(c => { const a = cityLink(c, "icon", cur); a.append(el("i","ico folder"), el("span",null,c.city.toLowerCase() + "")); ic.append(a); });
-    if (cur === "hd") $("hdIcon").setAttribute("aria-current","page"); else $("hdIcon").removeAttribute("aria-current");
+    list.forEach(c => { const a = cityLink(c, "icon", cur); const fi = el("i","ico folder"); const r = posts.find(x => slug(x.data.city) === c.slug); if (r && !canEdit && isLocked(r.data)) fi.append(el("span","lockb")); a.append(fi, el("span",null,cityLabel(c))); ic.append(a); });
     // menu bar Tour menu
     const m = $("tourMenu"); m.textContent = "";
     const allM = el("a",null); allM.href = "#all"; allM.setAttribute("role","menuitem"); allM.append(el("span",null,"All Cities")); if (!cur) allM.setAttribute("aria-current","page"); m.append(allM, el("hr"));
@@ -2325,8 +2618,7 @@ body:not([data-city]) .icon span,body[data-city=""] .icon span{background:#1b144
     if (canEdit) $("admin").hidden = cur !== "admin";   // the old quick-add + site settings live on the Control Panels page
     const anyTrash = posts.some(x => mediaList(x.data.trash).length);
     const ti = $("trashIcon"); ti.querySelector(".ico").classList.toggle("full", anyTrash);
-    if (cur === "trash") ti.setAttribute("aria-current","page"); else ti.removeAttribute("aria-current");
-    if (cur === "camera-roll") $("rollIcon").setAttribute("aria-current","page"); else $("rollIcon").removeAttribute("aria-current");
+
   }
 
   let lastState = "loading";
@@ -2334,6 +2626,7 @@ body:not([data-city]) .icon span,body[data-city=""] .icon span{background:#1b144
     lastState = state;
     const box = $("posts"); box.textContent = "";
     const cur = currentCity();
+    { const fl = $("finderLayer"); if (fl && (cur || state !== "ready")) { fl.textContent = ""; finder = null; } }
     if (cur === "post" && state === "ready"){
       box.append(postTonightView()); return;
     }
@@ -2376,7 +2669,8 @@ body:not([data-city]) .icon span,body[data-city=""] .icon span{background:#1b144
         "Lillenskap hasn't posted a city yet. Check back after the next show.";
       a.append(el("p",null,msg)); a.lastChild.style.margin = "6px 0 0"; b.append(a); w.append(tb,b); box.append(w); return;
     }
-    posts.forEach(({id,data}) => box.append(postWin(data,id)));
+    box.append(tourWin());
+    $("finderLayer").replaceChildren(finderDesk());
   }
 
   /* Tour menu open/close */
@@ -2430,8 +2724,8 @@ body:not([data-city]) .icon span,body[data-city=""] .icon span{background:#1b144
     const name = folderN === 1 ? "untitled folder" : `untitled folder ${folderN}`;
     const b = el("button","icon dicon newf"); b.type = "button"; b.append(el("i","ico folder"), el("span",null,name));
     b.addEventListener("click", () => macDialog(name, (body) => { const a = el("div","alert"); a.append(el("div","ico-note-i","i")); const m = el("p",null,`“${name}” is empty. Lillenskap didn't put anything in it.`); m.style.margin = "4px 0 0"; a.append(m); body.append(a); }));
-    const target = document.querySelector(".cicons") || document.querySelector("nav.icons");
-    if (target === document.querySelector("nav.icons")) target.insertBefore(b, target.lastElementChild); else target.append(b);
+    const target = document.querySelector("nav.icons");
+    target.insertBefore(b, target.lastElementChild);
     b.focus();
   }
   function aboutMac(){
@@ -2461,16 +2755,29 @@ body:not([data-city]) .icon span,body[data-city=""] .icon span{background:#1b144
     }
   });
 
+  let lastPage = currentCity();
   window.addEventListener("hashchange", () => {
     document.documentElement.style.overflow = "";
-    paintNav(); paintPosts(lastState);
-    const t = $("cityTabs"); if (t) t.scrollIntoView({block:"start", behavior: reduceMotion ? "auto" : "smooth"});
+    const page = currentCity();
+    if (page || lastPage){ paintNav(); paintPosts(lastState); window.scrollTo(0, 0); } else paintNav();
+    lastPage = page;
+    if (!page) openFinder(finderKeyFor(hashSlug()));
+  });
+  // links to folders (tabs, dates, desktop icons, Tour menu) open the window right here instead of reloading the page
+  document.addEventListener("click", (e) => {
+    if (e.defaultPrevented || e.button !== 0 || e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return;
+    const a = e.target.closest && e.target.closest('a[href^="#"]'); if (!a) return;
+    const h = slug(a.getAttribute("href").slice(1)); const k = finderKeyFor(h);
+    if (!k || currentCity()) return;
+    e.preventDefault(); try { history.replaceState(null, "", "#" + h); } catch {}
+    openFinder(k);
   });
 
   /* routing text <-> stops */
   const routeToText = (r) => (r && Array.isArray(r.stops) ? r.stops : []).map(s => [s.date,s.city,s.venue].filter(Boolean).join(" — ")).join("\n");
   const textToRoute = (txt) => txt.split("\n").map(l => l.trim()).filter(Boolean).map(l => { const [date="",city="",venue=""] = l.split(/\s*[—–|-]{1,2}\s*/); return {date,city,venue}; }).slice(0,200);
 
+  finderWanted = finderKeyFor(hashSlug());   // a shared link like #brooklyn opens that folder once the files load
   paintAbout(); paintMarquee(); paintCountdown(); paintNav(); paintPosts("loading");
 
   /* sparkle trail */
