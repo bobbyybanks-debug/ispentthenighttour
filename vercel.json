@@ -1,0 +1,11 @@
+{
+  "cleanUrls": true,
+  "rewrites": [
+    { "source": "/_blob/:id", "destination": "https://zppwfpgsqwwljvgvtnri.supabase.co/storage/v1/object/public/media/_blob/:id" }
+  ],
+  "headers": [
+    { "source": "/_blob/dbab3e27e815c2cb6edd773d2f76ee7a", "headers": [{ "key": "Content-Type", "value": "image/jpeg" }, { "key": "Cache-Control", "value": "public, max-age=31536000, immutable" }] },
+    { "source": "/_blob/:id(e78b6092f3fedb908fda026cbb7bb274|5d19c00e037e853006e774dc5116471e|7cd22e843cbadee932f55adfb23bd924|a53c33d666b270abad94cc3330add5ce|a0b7f6adf4c0366bf7e2dc059900e972|62841887b031095557e04ee9a5bebeb7|c165c7001581cd745f3a1970e860ab0c|d83496e2493d9929bf7ccc9772681967|cacac502272f730913a5c07c3279d893|45bee5b29a8368cf6dc82d30e2a9c528|64fc172f7aa5e72f020e2d9de9e7df8e|03db657e387a4f9022b1649ff66c8142|233e82707a5d7e180149238f3e49d458|b3d4d346038f3109d7aca5d875462dfc|28f52cc7620fbd88b891b746dd5178fe|7dc044df89bb39949de353b4748992f6|8abe048a01087bcc72fc977719d93b56|1e74caaf1486b887e2ba9a8602fe3433)", "headers": [{ "key": "Content-Type", "value": "image/png" }, { "key": "Cache-Control", "value": "public, max-age=31536000, immutable" }] },
+    { "source": "/js/(.*)", "headers": [{ "key": "Cache-Control", "value": "public, max-age=300" }] }
+  ]
+}
