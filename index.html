@@ -13,7 +13,7 @@
 <script src="/js/supabase-2.99.3.js"></script>
 <script src="/js/istn-backend.js"></script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Pixelify+Sans:wght@400;700&family=VT323&family=Rye&family=Special+Elite&family=UnifrakturCook:wght@700&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Pixelify+Sans:wght@400;700&family=VT323&family=Rye&family=Special+Elite&family=UnifrakturCook:wght@700&family=New+Rocker&display=swap">
 <style>
 /* Layout: a Mac OS 8 "Platinum" desktop. Menu bar on top, desktop icons down the right,
    stacked windows in the middle: title window, marquee, About Lillenskap, then one window per city. */
@@ -38,6 +38,7 @@
   --f-type:"Special Elite","American Typewriter","Courier New",monospace;
   --f-marker:"Permanent Marker","Marker Felt","Comic Sans MS",cursive;
   --f-black:"UnifrakturCook","Old English Text MT","Times New Roman",serif;
+  --f-rock:"New Rocker","UnifrakturCook","Times New Roman",serif;   /* Lillenskap's name: readable k */
 }
 html,body{min-height:100%}
 body{
@@ -513,11 +514,11 @@ body.simple #ptnPill{display:none}
 
 /* about */
 .about{display:flex;gap:16px;align-items:flex-start;flex-wrap:wrap}
-.avatar{width:96px;height:96px;flex:none;border:1px solid var(--ink);background:#cfcfcf;display:grid;place-items:center;overflow:hidden}
+.avatar{width:96px;height:96px;flex:none;border:2px solid var(--ink);border-radius:50%;background:#cfcfcf;display:grid;place-items:center;overflow:hidden}
 .avatar img{width:100%;height:100%;object-fit:cover}
 .avatar svg{width:70%;height:70%}
 .about .txt{flex:1;min-width:0;max-width:62ch}
-.about h2{margin:0 0 6px;font-family:var(--f-black);font-weight:700;font-size:36px;line-height:1}
+.about h2{margin:0 0 6px;font-family:var(--f-rock);font-weight:400;font-size:38px;line-height:1.05}
 .kv{display:grid;grid-template-columns:auto 1fr;gap:2px 12px;font-family:var(--f-type);font-size:16px;margin:10px 0 0;text-transform:lowercase}
 .kv dt{color:#555}.kv dd{margin:0}
 .ph{background:#ffff99;outline:1px dashed #cc9900;padding:0 3px}
