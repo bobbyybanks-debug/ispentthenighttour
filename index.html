@@ -169,24 +169,10 @@ button.frame:hover{outline:2px solid var(--hot2);outline-offset:1px}
   .cctl{display:none}
   .dicon{width:76px}
 }
-/* draggable junk */
+/* desktop junk: fixed stickers, nobody can move them */
 .junk{position:absolute;inset:0;pointer-events:none;z-index:31}
 .junk-p{position:absolute;pointer-events:none;touch-action:none;user-select:none;-webkit-user-select:none;transform:rotate(var(--rot,0deg));filter:drop-shadow(2px 3px 0 rgba(0,0,0,.45));transition:filter .1s}
-.junk-p.held{cursor:grabbing;filter:drop-shadow(6px 9px 0 rgba(0,0,0,.35));transform:rotate(var(--rot,0deg)) scale(1.08)}
 .junk-p svg{display:block;width:100%;height:auto}
-.junk.arranging{z-index:65}
-.junk.arranging .junk-p{pointer-events:auto;cursor:grab}
-.junk.arranging .junk-p:hover{outline:2px dashed rgba(255,255,255,.8);outline-offset:3px}
-.junk.arranging .junk-p.picked{outline:2px solid #ffee00;outline-offset:3px}
-.arrbar{position:fixed;z-index:80;left:50%;bottom:14px;transform:translateX(-50%);width:min(640px,calc(100vw - 24px));background:var(--plat);border:1px solid var(--ink);box-shadow:3px 3px 0 rgba(0,0,0,.55);font-family:var(--f-sys)}
-.arrbar .tb{display:flex;align-items:center;height:20px;padding:0 6px;border-bottom:1px solid var(--ink);background:repeating-linear-gradient(var(--plat) 0 1px,var(--plat-lo) 1px 2px,var(--plat) 2px 3px)}
-.arrbar .tb b{margin:0 auto;background:var(--plat);padding:0 8px;font-size:12px}
-.arrbar .ab{display:flex;flex-wrap:wrap;align-items:center;gap:8px;padding:8px 10px;font-size:12px}
-.arrbar .ab .hint{flex:1 1 200px;min-width:0}
-.arrbar .ab .rot{display:flex;gap:4px;align-items:center}
-.arrbar button{font:12px var(--f-sys);padding:3px 10px;border:1px solid var(--ink);border-radius:4px;background:linear-gradient(#fff,#ccc);cursor:pointer}
-.arrbar button.def{box-shadow:0 0 0 2px var(--ink)}
-.arrbar button:disabled{opacity:.45;cursor:default}
 .jk-star,.jk-holo{width:54px}.jk-burst{width:96px}.jk-burst svg{animation:gspin 4s steps(12) infinite}
 .jk-pick{width:44px}.jk-train{width:150px}.jk-hotdog{width:100px}.jk-boombox{width:120px}.jk-shades{width:120px}.jk-board{width:40px}.jk-palm{width:90px}
 .jsway{transform-origin:38px 36px;animation:sway 2.4s steps(4) infinite alternate}
@@ -1528,9 +1514,8 @@ body.simple #ptnPill{display:none}
     a.append(st, del); return a;
   }
 
-  /* ---- draggable junk: stickers + tour stuff on the desktop. Loud on home, a few city-specific pieces in each city.
-         Positions are set by the crew in Special → Arrange Stickers and saved for everyone (site/layout).
-         Fans can't move them. ---- */
+  /* ---- desktop junk: stickers + tour stuff on the desktop. Loud on home, a few city-specific pieces in each city.
+         Positions are fixed in JUNK below (x = fraction of width, y = px, r = degrees). Nothing on the page can move them. ---- */
   const JSVG = {
     star:'<svg viewBox="0 0 60 60"><defs><linearGradient id="jg1" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#fff7a8"/><stop offset=".5" stop-color="#ffcc00"/><stop offset="1" stop-color="#e09a00"/></linearGradient></defs><path d="M30 3l8 18 19 2-14 13 4 19-17-10-17 10 4-19L3 23l19-2z" fill="url(#jg1)" stroke="#000" stroke-width="2"/><path d="M22 18l4-6" stroke="#fff" stroke-width="3" stroke-linecap="round"/></svg>',
     holo:'<svg viewBox="0 0 60 60"><defs><linearGradient id="jg2" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#ff9ff3"/><stop offset=".33" stop-color="#9ff3ff"/><stop offset=".66" stop-color="#fff59f"/><stop offset="1" stop-color="#b59fff"/></linearGradient></defs><path d="M30 3l8 18 19 2-14 13 4 19-17-10-17 10 4-19L3 23l19-2z" fill="url(#jg2)" stroke="#000" stroke-width="2"/></svg>',
@@ -1587,32 +1572,16 @@ body.simple #ptnPill{display:none}
     "brooklyn": [{k:"tk", kind:"img", src:"/_blob/03db657e387a4f9022b1649ff66c8142", x:0.7, y:150, w:170, r:-6},{k:"metro", kind:"img", src:"/_blob/5d19c00e037e853006e774dc5116471e", x:0.05, y:600, w:200, r:-6},{k:"cat", kind:"img", src:"/_blob/d83496e2493d9929bf7ccc9772681967", x:0.86, y:300, w:80, r:3},{k:"hydrant", kind:"img", src:"/_blob/cacac502272f730913a5c07c3279d893", x:0.78, y:600, w:100, r:8},{k:"stoop", kind:"img", src:"/_blob/45bee5b29a8368cf6dc82d30e2a9c528", x:0.42, y:780, w:140, r:-4, desk:1},{k:"bridge", kind:"img", src:"/_blob/64fc172f7aa5e72f020e2d9de9e7df8e", x:0.02, y:260, w:160, r:5, desk:1}],
     "los-angeles": [{k:"tk", kind:"img", src:"/_blob/8abe048a01087bcc72fc977719d93b56", x:0.7, y:150, w:170, r:5},{k:"palm", kind:"img", src:"/_blob/233e82707a5d7e180149238f3e49d458", x:0.89, y:330, w:90, r:0},{k:"lowrider", kind:"img", src:"/_blob/b3d4d346038f3109d7aca5d875462dfc", x:0.04, y:640, w:200, r:-3},{k:"taco", kind:"img", src:"/_blob/28f52cc7620fbd88b891b746dd5178fe", x:0.74, y:620, w:170, r:6},{k:"freeway", kind:"img", src:"/_blob/7dc044df89bb39949de353b4748992f6", x:0.4, y:780, w:130, r:-5, desk:1}]
   };
-  let layoutSaved = {};      // site/layout.pos: "view:key" -> {x (fraction of width), y (px), r (deg)}
-  let draft = null;          // unsaved changes while arranging; null value = back to default spot
-  let arranging = false, picked = null;
-  const jGet = (key) => { if (draft && key in draft) return draft[key]; return layoutSaved[key] || null; };
-  const jSet = (key, v) => { if (draft) draft[key] = v; };
-  let junkZ = 31;
-  const undoStack = [];
-  let syncUndo = () => {};
   let stickers = [];   // custom stickers uploaded by you (site/stickers)
   async function removeSticker(id){
     if (!db) return;
     await db.doc("site/stickers").set({items: stickers.filter(x => x.id !== id)});
     if (assets) { try { assets.delete(id).catch(() => {}); } catch {} }
   }
-  function resetPage(){
-    if (!draft) return;
-    const view = currentCity() || "home";
-    const keys = new Set([...Object.keys(layoutSaved), ...Object.keys(draft)].filter(k => k.startsWith(view + ":")));
-    keys.forEach(k => { draft[k] = null; });
-    picked = null; paintJunk(); paintArrBar();
-  }
   function paintJunk(){
     const layer = $("junk"); if (!layer) return;
     const cur = currentCity(); const view = cur || "home";
     layer.textContent = "";
-    layer.classList.toggle("arranging", arranging);
     let list = JUNK[view]; if (!list) return;
     if (view === "home") list = list.concat(stickers.map((st, i) => ({k:"st-" + st.id, kind:"custom", src:blob(st.id), sid:st.id, x:[.06,.74,.36,.88,.2,.6][i % 6], y:180 + (i * 233) % 1100, r:[-9,7,-4,11,-13,5][i % 6]})));
     const stops = cityList();
@@ -1622,125 +1591,13 @@ body.simple #ptnPill{display:none}
       const stop = j.kind === "ticket" ? (j.city ? stops.find(s => s.slug === j.city) : stops[j.stop]) : null;
       if (j.kind === "ticket" && !stop) return;
       const piece = junkPiece({...j, n:i}, stop);
-      const key = view + ":" + j.k;
-      const saved = jGet(key);
       const W = layer.clientWidth || 1;
-      piece.style.setProperty("--rot", (saved && saved.r != null ? saved.r : j.r) + "deg");
+      piece.style.setProperty("--rot", j.r + "deg");
       layer.append(piece);
-      const pw = piece.offsetWidth;
-      const fx = saved ? saved.x : j.x;
-      piece.style.left = Math.max(0, Math.min(fx * W, W - pw)) + "px";
-      piece.style.top = ((saved ? saved.y : j.y) * (phone ? .8 : 1)) + "px";
-      piece.dataset.key = key; piece.dataset.phone = phone ? "1" : "";
-      if (picked === key) piece.classList.add("picked");
-      if (!arranging) return;   // locked for everyone outside Arrange Stickers
-      piece.addEventListener("pointerdown", (e) => {
-        if (e.button !== 0 || e.target.closest(".tdel")) return;
-        pick(piece);
-        e.preventDefault(); piece.setPointerCapture(e.pointerId);
-        piece.classList.add("held"); piece.style.zIndex = String(++junkZ);
-        const r = layer.getBoundingClientRect();
-        const ox = e.clientX - piece.offsetLeft, oy = e.clientY - piece.offsetTop;
-        const before = {view, key, left: piece.offsetLeft, top: piece.offsetTop, prev: jGet(key)};
-        const move = (ev) => {
-          const x = Math.max(0, Math.min(ev.clientX - ox, layer.clientWidth - piece.offsetWidth));
-          const y = Math.max(0, ev.clientY - oy);
-          piece.style.left = x + "px"; piece.style.top = y + "px";
-        };
-        const up = () => {
-          piece.classList.remove("held");
-          piece.removeEventListener("pointermove", move); piece.removeEventListener("pointerup", up); piece.removeEventListener("pointercancel", up);
-          if (piece.offsetLeft !== before.left || piece.offsetTop !== before.top){ undoStack.push({...before, piece}); if (undoStack.length > 30) undoStack.shift(); syncUndo(); }
-          commitPiece(piece);
-        };
-        piece.addEventListener("pointermove", move); piece.addEventListener("pointerup", up); piece.addEventListener("pointercancel", up);
-        void r;
-      });
+      piece.style.left = Math.max(0, Math.min(j.x * W, W - piece.offsetWidth)) + "px";
+      piece.style.top = (j.y * (phone ? .8 : 1)) + "px";
     });
   }
-
-  /* ---- Arrange Stickers (crew only): drag, nudge with arrow keys, rotate, then Save for everyone ---- */
-  function commitPiece(piece){
-    const layer = $("junk"); if (!layer || !piece) return;
-    const phone = piece.dataset.phone === "1";
-    jSet(piece.dataset.key, {x: piece.offsetLeft / (layer.clientWidth || 1), y: Math.round(piece.offsetTop / (phone ? .8 : 1)), r: parseFloat(piece.style.getPropertyValue("--rot")) || 0});
-    paintArrBar();
-  }
-  function pick(piece){
-    document.querySelectorAll(".junk-p.picked").forEach(n => n.classList.remove("picked"));
-    picked = piece ? piece.dataset.key : null;
-    if (piece) piece.classList.add("picked");
-    paintArrBar();
-  }
-  const pickedEl = () => picked ? [...document.querySelectorAll(".junk-p")].find(n => n.dataset.key === picked) : null;
-  function nudgeSticker(dx, dy, dr){
-    const p = pickedEl(); if (!p) return;
-    const layer = $("junk");
-    const before = {view: currentCity() || "home", key: picked, left: p.offsetLeft, top: p.offsetTop, prev: jGet(picked), piece: p};
-    if (dx || dy){
-      p.style.left = Math.max(0, Math.min(p.offsetLeft + dx, layer.clientWidth - p.offsetWidth)) + "px";
-      p.style.top = Math.max(0, p.offsetTop + dy) + "px";
-    }
-    if (dr){ const r = (parseFloat(p.style.getPropertyValue("--rot")) || 0) + dr; p.style.setProperty("--rot", Math.round(r * 10) / 10 + "deg"); }
-    undoStack.push(before); if (undoStack.length > 60) undoStack.shift(); syncUndo();
-    commitPiece(p);
-  }
-  let arrBar = null;
-  const draftCount = () => draft ? Object.keys(draft).length : 0;
-  function paintArrBar(){
-    if (!arrBar) return;
-    const n = draftCount();
-    arrBar.querySelector(".tb b").textContent = "Arrange Stickers · " + (currentCity() || "home");
-    arrBar.querySelector(".hint").textContent = picked
-      ? "Selected. Drag it, or use the arrow keys (Shift = 10px). Rotate with the buttons or [ and ]."
-      : "Drag a sticker to move it. Click one to fine-tune it with the arrow keys.";
-    arrBar.querySelectorAll(".rot button").forEach(b => { b.disabled = !picked; });
-    const sv = arrBar.querySelector(".save"); sv.disabled = !n; sv.textContent = n ? `Save (${n})` : "Save";
-  }
-  function startArrange(){
-    if (!canEdit || arranging) return;
-    arranging = true; draft = {}; picked = null; undoStack.length = 0; syncUndo();
-    arrBar = el("div","arrbar"); arrBar.setAttribute("role","toolbar"); arrBar.setAttribute("aria-label","Arrange stickers");
-    const tb = el("div","tb"); tb.append(el("b",null,"Arrange Stickers · " + (currentCity() || "home")));
-    const ab = el("div","ab");
-    const rot = el("div","rot");
-    const mk = (label, title, fn, cls) => { const b = el("button", cls || null, label); b.type = "button"; if (title) b.title = title; b.addEventListener("click", fn); return b; };
-    rot.append(mk("⟲ 5°","Rotate left", () => nudgeSticker(0,0,-5)), mk("⟲ 1°","Rotate left a little", () => nudgeSticker(0,0,-1)), mk("1° ⟳","Rotate right a little", () => nudgeSticker(0,0,1)), mk("5° ⟳","Rotate right", () => nudgeSticker(0,0,5)));
-    ab.append(el("span","hint",""), rot,
-      mk("Reset Page","Put this page's stickers back to their starting spots", resetPage),
-      mk("Cancel", null, () => stopArrange(false)),
-      mk("Save", null, () => stopArrange(true), "def save"));
-    arrBar.append(tb, ab); document.body.append(arrBar);
-    paintJunk(); paintArrBar();
-  }
-  async function stopArrange(save){
-    if (!arranging) return;
-    if (save && draftCount()){
-      const next = {...layoutSaved};
-      Object.entries(draft).forEach(([k, v]) => { if (v == null) delete next[k]; else next[k] = v; });
-      const sv = arrBar && arrBar.querySelector(".save"); if (sv){ sv.disabled = true; sv.textContent = "Saving…"; }
-      try {
-        await db.doc("site/layout").set({pos: next});
-        layoutSaved = next;
-        const views = [...new Set(Object.keys(draft).map(k => k.split(":")[0]))];
-        logAct(`arranged stickers on ${views.join(", ")}`);
-      } catch(e){ if (sv){ sv.disabled = false; sv.textContent = "Couldn't save. Try again"; } return; }
-    }
-    arranging = false; draft = null; picked = null; undoStack.length = 0; syncUndo();
-    if (arrBar){ arrBar.remove(); arrBar = null; }
-    paintJunk();
-  }
-  document.addEventListener("keydown", (e) => {
-    if (!arranging) return;
-    if (e.target.closest && e.target.closest("input,textarea,select,[contenteditable]")) return;
-    if (e.key === "Escape"){ if (picked) pick(null); else stopArrange(false); e.preventDefault(); return; }
-    if (!picked) return;
-    const step = e.shiftKey ? 10 : 1;
-    const map = {ArrowLeft:[-step,0,0], ArrowRight:[step,0,0], ArrowUp:[0,-step,0], ArrowDown:[0,step,0], "[":[0,0,e.shiftKey ? -5 : -1], "]":[0,0,e.shiftKey ? 5 : 1], "{":[0,0,-5], "}":[0,0,5]};
-    const m = map[e.key]; if (!m) return;
-    e.preventDefault(); nudgeSticker(...m);
-  });
-  window.addEventListener("beforeunload", (e) => { if (arranging && draftCount()){ e.preventDefault(); e.returnValue = ""; } });
 
   /* ===================== CONTROL PANELS (admin, #admin) =====================
      Overview of every city, a city editor (details, recap links, media folders with
@@ -2439,9 +2296,7 @@ body.simple #ptnPill{display:none}
   function mItem(menu, label, fn){ const b = el("button",null); b.type = "button"; b.setAttribute("role","menuitem"); b.append(el("span",null,label)); b.addEventListener("click", fn); menu.m.append(b); return b; }
   mItem(fileM, "New Folder", newFolder);
   mItem(fileM, "Close Window", () => { const w = document.querySelector(".float.active") || document.querySelector(".float"); const c = w && w.querySelector('.tb button[data-act="close"]'); if (c) c.click(); });
-  const undoBtn = mItem(editM, "Can't Undo", undoDrag);
-  syncUndo = () => { undoBtn.disabled = !undoStack.length; undoBtn.firstChild.textContent = undoStack.length ? "Undo Move" : "Can't Undo"; };
-  syncUndo();
+  mItem(editM, "Can't Undo", () => {}).disabled = true;
   let viewMode = "icon";
   const vIcon = mItem(viewM, "by Icon", () => setView("icon")), vList = mItem(viewM, "by List", () => setView("list"));
   function setView(m){ viewMode = m; document.body.classList.toggle("listview", m === "list"); vIcon.toggleAttribute("aria-current", m === "icon"); vList.toggleAttribute("aria-current", m === "list"); }
@@ -2451,13 +2306,7 @@ body.simple #ptnPill{display:none}
   mItem(specialM, "About This Macintosh", aboutMac);
   const cpItem = mItem(specialM, "Control Panels", () => { location.hash = "#admin"; }); cpItem.hidden = true;
   const ptItem = mItem(specialM, "Post Tonight", () => { location.hash = "#post"; }); ptItem.hidden = true;
-  const arrItem = mItem(specialM, "Arrange Stickers", () => startArrange()); arrItem.hidden = true;
 
-  function undoDrag(){
-    const u = undoStack.pop(); syncUndo(); if (!u) return;
-    if (draft){ if (u.prev) draft[u.key] = u.prev; else delete draft[u.key]; }
-    paintJunk(); paintArrBar();
-  }
   // small Mac dialog, fixed on screen
   function macDialog(title, buildBody, wide){
     const old = document.querySelector(".macdlg"); if (old) old.remove();
@@ -2543,7 +2392,7 @@ body.simple #ptnPill{display:none}
     if (!db){ paintPosts("offline"); return; }
     try { canEdit = !!(userNs && await userNs.canEdit()); } catch { canEdit = false; }
     userNsG = userNs; if (canEdit && userNs){ try { me = await userNs.id(); } catch {} try { isOwnerV = !!(await userNs.isOwner()); } catch {} }
-    if (canEdit){ assets = await claude.use("assets"); $("admin").hidden = currentCity() !== "admin"; cpItem.hidden = false; ptItem.hidden = false; arrItem.hidden = false; applySimple(); const pill = el("a","ptn-pill","＋ POST TONIGHT"); pill.href = "#post"; pill.id = "ptnPill"; document.body.append(pill); }
+    if (canEdit){ assets = await claude.use("assets"); $("admin").hidden = currentCity() !== "admin"; cpItem.hidden = false; ptItem.hidden = false; applySimple(); const pill = el("a","ptn-pill","＋ POST TONIGHT"); pill.href = "#post"; pill.id = "ptnPill"; document.body.append(pill); }
 
     let loaded = false;
     const timer = setTimeout(() => { if (!loaded) paintPosts("error"); }, 10000);
@@ -2563,11 +2412,6 @@ body.simple #ptnPill{display:none}
     }, () => {});
     db.doc("secret/stash").onSnapshot((d) => { const v = d.exists ? (d.data() || {}) : {}; stash = Array.isArray(v.items) ? v.items.filter(x => x && typeof x.id === "string") : []; if (currentCity() === "hd") paintPosts(lastState); }, () => {});
     db.doc("secret/key").onSnapshot((d) => { const v = d.exists ? (d.data() || {}) : {}; stashHash = typeof v.hash === "string" ? v.hash : ""; }, () => {});
-    db.doc("site/layout").onSnapshot((d) => {
-      const v = d.exists ? (d.data() || {}) : {};
-      layoutSaved = (v.pos && typeof v.pos === "object") ? v.pos : {};
-      if (!arranging) paintJunk();
-    }, () => {});
     db.doc("site/stickers").onSnapshot((d) => {
       const v = d.exists ? (d.data() || {}) : {};
       stickers = Array.isArray(v.items) ? v.items.filter(x => x && typeof x.id === "string") : [];
