@@ -42,12 +42,10 @@
 }
 html,body{min-height:100%}
 body{
-  background-color:var(--desk);
-  background-image:
-    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='140'%3E%3Cg font-family='Georgia,serif' font-size='22' fill='%23ffee00'%3E%3Ctext x='12' y='30'%3E%E2%9C%A6%3C/text%3E%3Ctext x='120' y='80' fill='%23ff66ff'%3E%E2%98%85%3C/text%3E%3Ctext x='60' y='125' fill='%2366ffff' font-size='16'%3E%E2%9C%A7%3C/text%3E%3C/g%3E%3Ctext x='40' y='62' font-family='Courier New,monospace' font-size='11' fill='%23ffffff' fill-opacity='.35' transform='rotate(-14 90 60)'%3Ei spent the night%3C/text%3E%3C/svg%3E"),
-    repeating-linear-gradient(45deg,transparent 0 22px,rgba(255,255,255,.05) 22px 24px),
-    radial-gradient(var(--desk-dot) 1px,transparent 1px);
-  background-size:180px 140px,auto,4px 4px;
+  /* the tour flyer, photocopied and wheat-pasted in a grid (art/bg-wall.jpg is a seamless tile) */
+  background-color:#2a2250;
+  background-image:url("/art/bg-wall.jpg");
+  background-size:1200px auto;
   color:var(--ink);font-family:var(--f-body);font-size:13px;
 }
 body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:10;background:var(--plat)}
@@ -171,6 +169,8 @@ button.frame:hover{outline:2px solid var(--hot2);outline-offset:1px}
   .dicon{width:76px}
 }
 /* desktop junk: fixed stickers, nobody can move them */
+.junkwide{position:absolute;left:0;top:0;width:100%;height:0;z-index:31;pointer-events:none}
+.jw{position:absolute;display:block;height:auto;image-rendering:pixelated;filter:drop-shadow(2px 3px 0 rgba(0,0,0,.45));pointer-events:none}
 .junk{position:absolute;inset:0;pointer-events:none;z-index:31}
 .junk-p{position:absolute;pointer-events:none;touch-action:none;user-select:none;-webkit-user-select:none;transform:rotate(var(--rot,0deg));filter:drop-shadow(2px 3px 0 rgba(0,0,0,.45));transition:filter .1s}
 .junk-p svg{display:block;width:100%;height:auto}
@@ -455,11 +455,12 @@ body.simple #ptnPill{display:none}
   padding-block:22px 60px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
 .stack{display:flex;flex-direction:column;gap:22px;min-width:0}
 .icons{display:flex;flex-direction:column;gap:18px;align-items:center;padding-top:6px}
-@media (max-width:720px){.desktop{grid-template-columns:minmax(0,1fr)}.icons{flex-direction:row;flex-wrap:wrap;justify-content:center;order:-1;padding-top:0}}
+@media (max-width:720px){body{background-size:780px auto}.desktop{grid-template-columns:minmax(0,1fr)}.icons{flex-direction:row;flex-wrap:wrap;justify-content:center;order:-1;padding-top:0}}
 
 .icon{display:flex;flex-direction:column;align-items:center;gap:4px;width:84px;text-align:center;color:var(--paper);
   font-family:var(--f-sys);font-size:12px;text-decoration:none;cursor:pointer;background:none;border:0;padding:0}
 .icon span{background:var(--desk);padding:0 3px}
+body:not([data-city]) .icon span,body[data-city=""] .icon span{background:#1b1440}
 .icon:hover span,.icon:focus-visible span{background:var(--ink);color:var(--paper)}
 .icon:focus-visible{outline:none}
 .ico{width:40px;height:34px;position:relative}
@@ -662,6 +663,7 @@ body.simple #ptnPill{display:none}
   <span id="clock">12:00 AM</span>
 </div>
 
+<div class="junkwide" id="junkwide" aria-hidden="true"></div>
 <div class="desktop">
   <div class="junk" id="junk" aria-hidden="true"></div>
   <main class="stack">
@@ -1568,20 +1570,47 @@ body.simple #ptnPill{display:none}
     return d;
   }
   const JUNK = {
-    home: [
-      {k:"t1", kind:"ticket", stop:0, x:.02, y:250, r:-8, desk:1},
-      {k:"t2", kind:"ticket", stop:1, x:.70, y:600, r:6, desk:1},
-      {k:"pick", kind:"pick", x:.55, y:300, r:18},
-      {k:"s1", kind:"star", x:.03, y:20, r:-12},
-      {k:"s2", kind:"holo", x:.62, y:120, r:10, desk:1},
-      {k:"burst", kind:"burst", x:.84, y:420, r:0},
-      {k:"vip", kind:"vip", x:.48, y:1000, r:12, desk:1},
-      {k:"tape1", kind:"tape", x:.01, y:62, r:-35, desk:1},
-    ],
+    home: [],
     "chicago": [{k:"tk", kind:"img", src:"/_blob/c165c7001581cd745f3a1970e860ab0c", x:0.7, y:150, w:170, r:6, desk:1},{k:"dog", kind:"img", src:"/_blob/a53c33d666b270abad94cc3330add5ce", x:0.76, y:560, w:150, r:9}],
     "brooklyn": [{k:"tk", kind:"img", src:"/_blob/03db657e387a4f9022b1649ff66c8142", x:0.7, y:150, w:170, r:-6, desk:1},{k:"metro", kind:"img", src:"/_blob/5d19c00e037e853006e774dc5116471e", x:0.72, y:760, w:200, r:-6},{k:"bridge", kind:"img", src:"/_blob/64fc172f7aa5e72f020e2d9de9e7df8e", x:0.02, y:260, w:160, r:5, desk:1}],
     "los-angeles": [{k:"tk", kind:"img", src:"/_blob/8abe048a01087bcc72fc977719d93b56", x:0.7, y:150, w:170, r:5, desk:1}]
   };
+  // Home: the commissioned pixel stickers. Wide screens put them in the side margins (y = px from the top of the desktop);
+  // narrower screens and phones get three small ones tucked against window corners.
+  const PX = (id) => "/_blob/" + id;
+  const HOME_WIDE = [
+    {src:PX("c165c7001581cd745f3a1970e860ab0c"), side:"L", y:230,  w:165, r:-8},  // chicago ticket
+    {src:PX("a53c33d666b270abad94cc3330add5ce"), side:"L", y:560,  w:150, r:6},   // hot dog
+    {src:PX("64fc172f7aa5e72f020e2d9de9e7df8e"), side:"L", y:900,  w:160, r:-4},  // brooklyn bridge
+    {src:PX("d83496e2493d9929bf7ccc9772681967"), side:"L", y:1300, w:80,  r:4},   // cat
+    {src:PX("5d19c00e037e853006e774dc5116471e"), side:"R", y:560,  w:190, r:7},   // MetroCard
+    {src:PX("233e82707a5d7e180149238f3e49d458"), side:"R", y:860,  w:90,  r:0},   // palm
+    {src:PX("28f52cc7620fbd88b891b746dd5178fe"), side:"R", y:1160, w:165, r:-5},  // taco truck
+    {src:PX("8abe048a01087bcc72fc977719d93b56"), side:"R", y:1500, w:165, r:5}    // LA ticket
+  ];
+  const HOME_TUCK = [
+    {src:PX("a53c33d666b270abad94cc3330add5ce"), at:".win.hero", corner:"bl", dx:-12, dy:-34, w:74, r:-8},
+    {src:PX("5d19c00e037e853006e774dc5116471e"), at:"#aboutWin", corner:"tr", dx:-66, dy:-26, w:82, r:8},
+    {src:PX("233e82707a5d7e180149238f3e49d458"), at:"#posts > .win:last-child", corner:"br", dx:-30, dy:-58, w:44, r:0}
+  ];
+  function paintHomeWide(){
+    const layer = $("junkwide"); if (!layer) return;
+    layer.textContent = "";
+    if (currentCity() || document.body.classList.contains("shownight")) return;
+    const desk = document.querySelector(".desktop"); if (!desk) return;
+    const dr = desk.getBoundingClientRect(), vw = document.documentElement.clientWidth;
+    const top0 = dr.top + scrollY, gutter = Math.min(dr.left, vw - dr.right);
+    const put = (j, left, top, w) => { const im = el("img","jw"); im.src = j.src; im.alt = ""; im.style.width = w + "px"; im.style.left = Math.round(left) + "px"; im.style.top = Math.round(top) + "px"; im.style.transform = `rotate(${j.r}deg)`; layer.append(im); };
+    if (gutter >= 110){
+      HOME_WIDE.forEach(j => { const w = Math.min(j.w, gutter - 24); const x0 = j.side === "L" ? dr.left - gutter : dr.right; put(j, x0 + (gutter - w) / 2, top0 + j.y, w); });
+    } else {
+      HOME_TUCK.forEach(j => { const a = document.querySelector(j.at); if (!a) return; const r = a.getBoundingClientRect(); if (!r.width) return;
+        const x = (j.corner[1] === "l" ? r.left : r.right) + j.dx, y = (j.corner[0] === "t" ? r.top : r.bottom) + j.dy + scrollY; put(j, Math.max(2, Math.min(x, vw - j.w - 2)), y, j.w); });
+    }
+  }
+  let wideT = null; const repaintWide = () => { clearTimeout(wideT); wideT = setTimeout(paintHomeWide, 120); };
+  window.addEventListener("resize", repaintWide);
+  if (window.ResizeObserver) { const ro = new ResizeObserver(repaintWide); const dk = document.querySelector(".desktop"); if (dk) ro.observe(dk); }
   let stickers = [];   // custom stickers uploaded by you (site/stickers)
   async function removeSticker(id){
     if (!db) return;
@@ -1592,6 +1621,7 @@ body.simple #ptnPill{display:none}
     const layer = $("junk"); if (!layer) return;
     const cur = currentCity(); const view = cur || "home";
     layer.textContent = "";
+    paintHomeWide();
     let list = JUNK[view]; if (!list) return;
     if (view === "home") list = list.concat(stickers.map((st, i) => ({k:"st-" + st.id, kind:"custom", src:blob(st.id), sid:st.id, x:[.06,.74,.36,.88,.2,.6][i % 6], y:180 + (i * 233) % 1100, r:[-9,7,-4,11,-13,5][i % 6]})));
     const stops = cityList();
