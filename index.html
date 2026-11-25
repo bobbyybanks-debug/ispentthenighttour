@@ -1553,24 +1553,18 @@ body.simple #ptnPill{display:none}
   }
   const JUNK = {
     home: [
-      {k:"t1", kind:"ticket", stop:0, x:.02, y:250, r:-8},
-      {k:"t2", kind:"ticket", stop:1, x:.70, y:600, r:6},
-      {k:"t3", kind:"ticket", stop:2, x:.10, y:1150, r:-4, desk:1},
-      {k:"lam", kind:"lam", x:.80, y:20, r:7},
-      {k:"band", kind:"band", x:.30, y:530, r:-3},
+      {k:"t1", kind:"ticket", stop:0, x:.02, y:250, r:-8, desk:1},
+      {k:"t2", kind:"ticket", stop:1, x:.70, y:600, r:6, desk:1},
       {k:"pick", kind:"pick", x:.55, y:300, r:18},
       {k:"s1", kind:"star", x:.03, y:20, r:-12},
-      {k:"s2", kind:"holo", x:.62, y:120, r:10},
-      {k:"s3", kind:"star", x:.40, y:880, r:20, desk:1},
+      {k:"s2", kind:"holo", x:.62, y:120, r:10, desk:1},
       {k:"burst", kind:"burst", x:.84, y:420, r:0},
-      {k:"nuwo", kind:"nuwo", x:.18, y:700, r:-10},
       {k:"vip", kind:"vip", x:.48, y:1000, r:12, desk:1},
-      {k:"tape1", kind:"tape", x:.01, y:62, r:-35},
-      {k:"tape2", kind:"tape", x:.83, y:62, r:30, desk:1}
+      {k:"tape1", kind:"tape", x:.01, y:62, r:-35, desk:1},
     ],
-    "chicago": [{k:"tk", kind:"img", src:"/_blob/c165c7001581cd745f3a1970e860ab0c", x:0.7, y:150, w:170, r:6},{k:"train", kind:"img", src:"/_blob/7cd22e843cbadee932f55adfb23bd924", x:0.03, y:640, w:190, r:-3},{k:"dog", kind:"img", src:"/_blob/a53c33d666b270abad94cc3330add5ce", x:0.76, y:560, w:150, r:9},{k:"tower", kind:"img", src:"/_blob/a0b7f6adf4c0366bf7e2dc059900e972", x:0.9, y:250, w:70, r:2, desk:1},{k:"beanie", kind:"img", src:"/_blob/62841887b031095557e04ee9a5bebeb7", x:0.4, y:760, w:110, r:-8, desk:1}],
-    "brooklyn": [{k:"tk", kind:"img", src:"/_blob/03db657e387a4f9022b1649ff66c8142", x:0.7, y:150, w:170, r:-6},{k:"metro", kind:"img", src:"/_blob/5d19c00e037e853006e774dc5116471e", x:0.05, y:600, w:200, r:-6},{k:"cat", kind:"img", src:"/_blob/d83496e2493d9929bf7ccc9772681967", x:0.86, y:300, w:80, r:3},{k:"hydrant", kind:"img", src:"/_blob/cacac502272f730913a5c07c3279d893", x:0.78, y:600, w:100, r:8},{k:"stoop", kind:"img", src:"/_blob/45bee5b29a8368cf6dc82d30e2a9c528", x:0.42, y:780, w:140, r:-4, desk:1},{k:"bridge", kind:"img", src:"/_blob/64fc172f7aa5e72f020e2d9de9e7df8e", x:0.02, y:260, w:160, r:5, desk:1}],
-    "los-angeles": [{k:"tk", kind:"img", src:"/_blob/8abe048a01087bcc72fc977719d93b56", x:0.7, y:150, w:170, r:5},{k:"palm", kind:"img", src:"/_blob/233e82707a5d7e180149238f3e49d458", x:0.89, y:330, w:90, r:0},{k:"lowrider", kind:"img", src:"/_blob/b3d4d346038f3109d7aca5d875462dfc", x:0.04, y:640, w:200, r:-3},{k:"taco", kind:"img", src:"/_blob/28f52cc7620fbd88b891b746dd5178fe", x:0.74, y:620, w:170, r:6},{k:"freeway", kind:"img", src:"/_blob/7dc044df89bb39949de353b4748992f6", x:0.4, y:780, w:130, r:-5, desk:1}]
+    "chicago": [{k:"tk", kind:"img", src:"/_blob/c165c7001581cd745f3a1970e860ab0c", x:0.7, y:150, w:170, r:6, desk:1},{k:"dog", kind:"img", src:"/_blob/a53c33d666b270abad94cc3330add5ce", x:0.76, y:560, w:150, r:9}],
+    "brooklyn": [{k:"tk", kind:"img", src:"/_blob/03db657e387a4f9022b1649ff66c8142", x:0.7, y:150, w:170, r:-6, desk:1},{k:"metro", kind:"img", src:"/_blob/5d19c00e037e853006e774dc5116471e", x:0.72, y:760, w:200, r:-6},{k:"bridge", kind:"img", src:"/_blob/64fc172f7aa5e72f020e2d9de9e7df8e", x:0.02, y:260, w:160, r:5, desk:1}],
+    "los-angeles": [{k:"tk", kind:"img", src:"/_blob/8abe048a01087bcc72fc977719d93b56", x:0.7, y:150, w:170, r:5, desk:1}]
   };
   let stickers = [];   // custom stickers uploaded by you (site/stickers)
   async function removeSticker(id){
