@@ -1088,10 +1088,12 @@ body.simple #ptnPill{display:none}
     head.append(el("h3",null,(p.city||"Untitled").toLowerCase()), el("span","when",[fmtDate(p.date), p.venue].filter(Boolean).join("   ·   ")));
     body.append(head);
 
-    const line = el("div","line"); line.append(miniAvatar());
-    const lp = el("p"); lp.append(el("span","who","Lillenskap posted:"));
-    if (p.line) lp.append(document.createTextNode(p.line)); else lp.append(el("span","ph","[his line for this city]"));
-    line.append(lp); body.append(line);
+    if (p.line || canEdit){
+      const line = el("div","line"); line.append(miniAvatar());
+      const lp = el("p"); lp.append(el("span","who","Lillenskap posted:"));
+      if (p.line) lp.append(document.createTextNode(p.line)); else lp.append(el("span","ph","[his line for this city]"));
+      line.append(lp); body.append(line);
+    }
 
     body.append(el("div","sect","PHOTOS"));
     const g = el("div","grid");
@@ -1307,10 +1309,13 @@ body.simple #ptnPill{display:none}
       const cw = mkWin(`${cityLc}`, tag, nItems(photos.length + phone.length + videos.length + (recap?1:0)));
       const head = el("div","cityhead");
       head.append(el("h3",null,cityLc), el("span","when",[fmtDate(p.date), p.venue].filter(Boolean).join("   ·   ")));
-      const line = el("div","line"); line.style.marginBottom = "0"; line.append(miniAvatar());
-      const lp = el("p"); lp.append(el("span","who","Lillenskap posted:"));
-      if (p.line) lp.append(document.createTextNode(p.line)); else lp.append(el("span","ph","[his line for this city]"));
-      line.append(lp); cw.body.append(head, line);
+      cw.body.append(head);
+      if (p.line || canEdit){
+        const line = el("div","line"); line.style.marginBottom = "0"; line.append(miniAvatar());
+        const lp = el("p"); lp.append(el("span","who","Lillenskap posted:"));
+        if (p.line) lp.append(document.createTextNode(p.line)); else lp.append(el("span","ph","[his line for this city]"));
+        line.append(lp); cw.body.append(line);
+      }
       if (canEdit && db) cw.body.append(deleteRow(id));
       return cw.w;
     }});
@@ -2272,7 +2277,7 @@ body.simple #ptnPill{display:none}
       a.append(el("div","stop", state === "error" ? "!" : "i"));
       const msg = state === "loading" ? "Opening Tour…" :
         state === "error" ? "The disk “Tour” couldn't be read. Reload the page to try again." :
-        state === "offline" ? "City posts show up here once you're signed in to claude.ai." :
+        state === "offline" ? "Couldn't reach the tour files. Reload the page to try again." :
         canEdit ? "No cities yet. Use the “Add City Post” window above to post the first one." :
         "Lillenskap hasn't posted a city yet. Check back after the next show.";
       a.append(el("p",null,msg)); a.lastChild.style.margin = "6px 0 0"; b.append(a); w.append(tb,b); box.append(w); return;
