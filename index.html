@@ -719,6 +719,64 @@ body:not([data-city]) .icon span,body[data-city=""] .icon span{background:#1b144
 .sparkle{position:fixed;pointer-events:none;z-index:50;font-size:14px;line-height:1;animation:fall .8s ease-out forwards}
 @keyframes fall{to{transform:translate(var(--dx),24px) scale(.3);opacity:0}}
 @media (prefers-reduced-motion:reduce){.blink,.haz{animation:none}.marq .track{animation:none;padding-left:0;white-space:normal}.marq{white-space:normal}}
+/* city post feed */
+.feedbody{background:var(--paper)}
+.float .feedbody{max-height:min(74vh,860px);overflow-y:auto}
+.fpost{position:relative;display:flex;flex-direction:column;gap:10px;padding:20px 0;border-bottom:1px dotted var(--ink)}
+.fpost:last-child{border-bottom:0}
+.fpost img,.fpost video{display:block;max-width:100%}
+.fp-media{display:grid;gap:8px;position:relative}
+.fp-media.n1{grid-template-columns:1fr}
+.fp-media.n2,.fp-media.n4{grid-template-columns:repeat(2,minmax(0,1fr))}
+.fp-media.n3{grid-template-columns:repeat(3,minmax(0,1fr))}
+.fp-media > img,.fp-media > video{width:100%;border:1px solid var(--ink);background:#bbb}
+.fp-media:not(.n1) > img,.fp-media:not(.n1) > video{aspect-ratio:1/1;object-fit:cover}
+.fp-media.tall{grid-template-columns:repeat(auto-fill,minmax(150px,1fr))}
+.fp-media.tall > img,.fp-media.tall > video{aspect-ratio:9/16;object-fit:cover}
+.fp-badge{position:absolute;left:8px;bottom:8px;padding:1px 6px;background:var(--ink);color:#fff;font-family:var(--f-sys);font-size:11px}
+.fp-pola{display:flex;flex-wrap:wrap;gap:16px}
+.fp-pf{width:min(240px,100%);padding:10px 10px 40px;background:#fff;border:1px solid var(--plat-lo);box-shadow:2px 2px 0 rgba(0,0,0,.25);box-sizing:border-box}
+.fp-pf img,.fp-pf video{width:100%}
+.fp-vid video{width:100%}
+.fp-audio{display:flex;flex-direction:column;gap:8px;padding:10px;border:1px solid var(--ink);background:var(--plat)}
+.fp-audio audio{width:100%}
+.fp-track{font-size:13px;font-weight:700}
+.fp-wave{display:flex;align-items:center;gap:2px;height:28px}
+.fp-wave span{width:3px;background:var(--ink)}
+.fp-file,.fp-linkcard{display:flex;align-items:center;gap:12px;padding:10px 12px;border:1px solid var(--ink);background:var(--plat);color:var(--ink);text-decoration:none;min-width:0}
+.fp-linkcard{justify-content:space-between}
+.fp-linkcard b,.fp-file b{overflow-wrap:anywhere}
+.fp-host{font-family:var(--f-mono);font-size:17px;color:var(--sel);white-space:nowrap}
+.fp-doc{width:22px;height:28px;flex:none;border:1px solid var(--ink);background:linear-gradient(225deg,var(--plat) 0 7px,#fff 7px)}
+.fp-ebox{border:1px solid var(--ink);background:#fff;overflow:hidden}
+.fp-ebox iframe{display:block;width:100%;border:0}
+.fp-ebox.e-instagram{max-width:420px}.fp-ebox.e-instagram iframe{height:640px}
+.fp-ebox.e-x{max-width:550px}.fp-ebox.e-x iframe{height:560px}
+.fp-ebox.e-tiktok{max-width:325px}.fp-ebox.e-tiktok iframe{height:740px}
+.fp-text{margin:0;font-size:18px;line-height:1.35;font-weight:700;overflow-wrap:anywhere}
+.fp-quote{margin:0;padding-left:16px;border-left:3px solid var(--ink);font-size:22px;line-height:1.3;font-weight:700;overflow-wrap:anywhere}
+.fp-src{font-size:12px;color:#444}
+.fp-chat{font-family:var(--f-mono);font-size:19px;line-height:1.3;display:flex;flex-direction:column;gap:2px;overflow-wrap:anywhere}
+.fp-ask{display:flex;flex-direction:column;gap:4px;padding:12px;border:1px solid var(--ink);background:var(--plat)}
+.fp-asker{font-size:12px;color:#444}
+.fp-answer,.fp-pq{margin:0;font-size:14px;line-height:1.4}
+.fp-pq{font-weight:700}
+.fp-poll{display:flex;flex-direction:column;gap:6px}
+.fp-opt{min-height:36px;text-align:left;padding:6px 10px;border:1px solid var(--ink);background:#fff;font:inherit;cursor:pointer}
+.fp-opt.on{background:var(--sel);color:#fff}
+.fp-loc{display:flex;flex-direction:column;gap:8px;color:var(--ink);text-decoration:none}
+.fp-map{position:relative;height:160px;border:1px solid var(--ink);background-color:#eee;background-image:linear-gradient(#ccc 1px,transparent 1px),linear-gradient(90deg,#ccc 1px,transparent 1px);background-size:24px 24px}
+.fp-pin{position:absolute;left:50%;top:50%;width:16px;height:16px;margin:-16px 0 0 -8px;background:var(--hot);border:1px solid var(--ink);border-radius:50% 50% 50% 0;transform:rotate(-45deg)}
+.fp-list{margin:0;padding-left:28px;font-family:var(--f-mono);font-size:19px;line-height:1.35}
+.fp-cap{margin:0;font-size:14px;line-height:1.4;overflow-wrap:anywhere}
+.fp-nocap{height:20px}
+.fp-edit{display:flex;gap:8px;align-items:center}
+.fpost > .adm-badge{position:static;align-self:flex-start}
+.fp-empty{margin:24px 0;color:#444}
+.fp-compose{margin-top:14px}
+.fp-compose label{display:flex;flex-direction:column;gap:4px}
+.fp-compose label[hidden]{display:none}
+.fp-compose select{font:inherit;min-height:32px}
 </style>
 </head>
 <body>
@@ -853,7 +911,7 @@ body:not([data-city]) .icon span,body[data-city=""] .icon span{background:#1b144
   function fanView(list){
     return list.filter(r => !r.data.hidden && !(r.data.revealAt && r.data.revealAt > nowMs())).map(r => {
       const d = {...r.data};
-      ["photos","phone","polaroids","trash"].forEach(f => { if (Array.isArray(d[f])) d[f] = d[f].filter(fanOk); });
+      ["photos","phone","polaroids","trash","feed"].forEach(f => { if (Array.isArray(d[f])) d[f] = d[f].filter(fanOk); });
       delete d.inbox; delete d.deleted;
       return {id:r.id, data:d};
     });
@@ -1454,6 +1512,207 @@ body:not([data-city]) .icon span,body[data-city=""] .icon span{background:#1b144
     return g;
   }
 
+  /* ---- city post feed: every upload is its own post, newest first (Tumblr-style) ---- */
+  const FEED_KINDS = [
+    ["photo","Photo / set","image/*"],["phone","iPhone (pics + clips)","image/*,video/*"],["polaroid","Polaroid","image/*"],
+    ["video","Video","video/*"],["gif","GIF","image/gif"],["scan","Scan (flyer, ticket, wristband)","image/*"],
+    ["youtube","YouTube",""],["instagram","Instagram",""],["x","X post",""],["tiktok","TikTok",""],
+    ["text","Text",""],["quote","Quote",""],["link","Link",""],["chat","Chat",""],
+    ["audio","Audio","audio/*"],["voice","Voice memo","audio/*"],["ask","Ask",""],["poll","Poll",""],
+    ["location","Location",""],["list","List",""],["file","File",""]
+  ];
+  const FEED_F = {
+    photo:{files:1}, phone:{files:1}, polaroid:{files:1}, video:{files:1}, gif:{files:1}, scan:{files:1},
+    file:{files:1, small:"File name (optional)"}, audio:{files:1, small:"Track — artist (optional)"}, voice:{files:1},
+    youtube:{url:"YouTube link"}, instagram:{url:"Instagram post or reel link"}, x:{url:"X post link"}, tiktok:{url:"TikTok video link"},
+    link:{url:"Link", small:"Title (optional)"},
+    text:{text:"Text"}, quote:{text:"Quote", small:"Who said it (optional)"},
+    chat:{text:"Chat: one message per line, like  Name: what they said"},
+    ask:{small:"Who asked (optional)", text:"Question", opts:"Answer"},
+    poll:{text:"Question", opts:"Options, one per line"},
+    location:{small:"Place", url:"Map link (optional)"}, list:{text:"List, one item per line"}
+  };
+  const safeUrl = (u) => { try { const x = new URL(String(u || "").trim()); return /^https?:$/.test(x.protocol) ? x.href : null; } catch { return null; } };
+  const hostOf = (u) => { try { return new URL(u).hostname.replace(/^www\./,""); } catch { return ""; } };
+  const feedLines = (s) => String(s || "").split("\n").map(x => x.trim()).filter(Boolean);
+  function embedSrc(kind, u){
+    try {
+      const x = new URL(String(u).trim()); const h = x.hostname.replace(/^(www|m)\./,""); const parts = x.pathname.split("/").filter(Boolean);
+      if (kind === "instagram" && h === "instagram.com"){ const i = parts.findIndex(s => ["p","reel","reels","tv"].includes(s)); if (i >= 0 && /^[\w-]+$/.test(parts[i+1] || "")) return `https://www.instagram.com/${parts[i] === "reels" ? "reel" : parts[i]}/${parts[i+1]}/embed/captioned/`; }
+      if (kind === "x" && (h === "x.com" || h === "twitter.com")){ const i = parts.indexOf("status"); if (i >= 0 && /^\d+$/.test(parts[i+1] || "")) return `https://platform.twitter.com/embed/Tweet.html?id=${parts[i+1]}&dnt=true`; }
+      if (kind === "tiktok" && (h === "tiktok.com" || h.endsWith(".tiktok.com"))){ const i = parts.indexOf("video"); if (i >= 0 && /^\d+$/.test(parts[i+1] || "")) return `https://www.tiktok.com/embed/v2/${parts[i+1]}`; }
+    } catch {}
+    return null;
+  }
+  // the city's own posts (newest first), then everything uploaded the old way (folders, recap links), one post per file
+  function feedEntries(p){
+    const own = mediaList(p.feed).filter(e => e.kind).sort((a,b) => (b.postedAt || 0) - (a.postedAt || 0));
+    const old = [];
+    ytList(p.videos).forEach((u,i) => old.push({id:"lv" + i, kind:"youtube", url:u, legacy:"videos"}));
+    if (p.recap && typeof p.recap.id === "string") old.push({id:"lr", kind:"video", media:[p.recap]});
+    [["photos","photo"],["phone","phone"],["polaroids","polaroid"]].forEach(([f,k]) => mediaList(p[f]).forEach(m => old.push({id:"l" + f + m.id, kind:k, media:[m], caption:m.caption, pending:m.pending, hidden:m.hidden, legacy:f, mid:m.id})));
+    return own.concat(old);
+  }
+  async function setEntry(pid, eid, patch){
+    const rec = postById(pid); if (!rec) return;
+    const arr = mediaList(rec.data.feed).map(e => e.id === eid ? {...e, ...patch} : e);
+    await upd(pid, {feed: arr});
+  }
+  function feedPost(e, p, pid){
+    const a = el("article","fpost k-" + e.kind);
+    const media = mediaList(e.media), cap = String(e.caption || "").trim();
+    const pic = (m) => {
+      if (String(m.type || "").startsWith("video/")){ const v = el("video"); v.src = blob(m.id); v.controls = true; v.playsInline = true; v.preload = "metadata"; return v; }
+      const im = el("img"); im.src = blob(m.id); im.alt = cap; im.loading = "lazy"; return im;
+    };
+    const out = (u, cls) => { const l = el("a", cls); l.href = u; l.target = "_blank"; l.rel = "noopener noreferrer"; return l; };
+    switch (e.kind){
+      case "photo": case "scan": case "gif": {
+        const g = el("div","fp-media n" + Math.min(media.length, 4)); media.forEach(m => g.append(pic(m)));
+        if (e.kind === "gif") g.append(el("span","fp-badge","GIF"));
+        a.append(g); break;
+      }
+      case "phone": { const g = el("div","fp-media tall"); media.forEach(m => g.append(pic(m))); a.append(g); break; }
+      case "polaroid": { const g = el("div","fp-pola"); media.forEach(m => { const f = el("div","fp-pf"); f.append(pic(m)); g.append(f); }); a.append(g); break; }
+      case "video": { media.forEach(m => { const b = el("div","fp-vid"); b.append(player(blob(m.id))); a.append(b); }); break; }
+      case "audio": case "voice": {
+        media.forEach(m => {
+          const b = el("div","fp-audio");
+          if (e.small) b.append(el("div","fp-track", e.small));
+          if (e.kind === "voice"){ const wv = el("div","fp-wave"); wv.setAttribute("aria-hidden","true"); for (let i = 0; i < 48; i++){ const s = el("span"); s.style.height = (4 + Math.round(Math.abs(Math.sin(i * 1.7 + (m.id.charCodeAt(i % m.id.length) || 0))) * 22)) + "px"; wv.append(s); } b.append(wv); }
+          const au = el("audio"); au.src = blob(m.id); au.controls = true; au.preload = "metadata"; b.append(au); a.append(b);
+        });
+        break;
+      }
+      case "file": { media.forEach(m => { const l = out(blob(m.id), "fp-file"); l.download = m.name || ""; l.append(el("span","fp-doc"), el("b",null, e.small || m.name || "file")); a.append(l); }); break; }
+      case "youtube": { if (isYT(e.url)) a.append(ytPlayer(e.url, (p.city || "").toLowerCase())); break; }
+      case "instagram": case "x": case "tiktok": {
+        const src = embedSrc(e.kind, e.url), u = safeUrl(e.url);
+        if (src){
+          const box = el("div","fp-ebox e-" + e.kind); const f = el("iframe");
+          f.src = src; f.loading = "lazy"; f.title = ({instagram:"Instagram post", x:"Post on X", tiktok:"TikTok"})[e.kind];
+          f.setAttribute("allow","encrypted-media; fullscreen; picture-in-picture"); f.setAttribute("allowfullscreen",""); f.setAttribute("referrerpolicy","strict-origin-when-cross-origin");
+          box.append(f); a.append(box);
+        } else if (u){ const l = out(u, "fp-linkcard"); l.append(el("b",null, hostOf(u)), el("span","fp-host","open ↗")); a.append(l); }
+        break;
+      }
+      case "text": a.append(el("p","fp-text", e.text || "")); break;
+      case "quote": a.append(el("blockquote","fp-quote", e.text || "")); if (e.small) a.append(el("div","fp-src","— " + e.small)); break;
+      case "link": { const u = safeUrl(e.url); if (u){ const l = out(u, "fp-linkcard"); l.append(el("b",null, e.small || hostOf(u)), el("span","fp-host", hostOf(u) + " ↗")); a.append(l); } break; }
+      case "chat": {
+        const c = el("div","fp-chat");
+        feedLines(e.text).forEach(l => { const m = l.match(/^([^:]{1,40}):\s*(.*)$/); const d = el("div"); if (m) d.append(el("b",null, m[1] + ":"), document.createTextNode(" " + m[2])); else d.textContent = l; c.append(d); });
+        a.append(c); break;
+      }
+      case "ask": {
+        const q = el("div","fp-ask"); q.append(el("span","fp-asker", (e.small || "Anonymous") + " asked:"), el("span",null, e.text || "")); a.append(q);
+        if (e.opts) a.append(el("p","fp-answer", e.opts));
+        break;
+      }
+      case "poll": {
+        a.append(el("p","fp-pq", e.text || ""));
+        const box = el("div","fp-poll"), key = "isptn-poll-" + e.id; let mine = null; try { mine = localStorage.getItem(key); } catch {}
+        const paint = () => { box.textContent = ""; feedLines(e.opts).forEach((o,i) => { const on = mine === String(i); const b = el("button","fp-opt" + (on ? " on" : ""), o); b.type = "button"; b.setAttribute("aria-pressed", on ? "true" : "false"); b.addEventListener("click", () => { mine = String(i); try { localStorage.setItem(key, mine); } catch {} paint(); }); box.append(b); }); };
+        paint(); a.append(box); break;
+      }
+      case "location": {
+        const u = safeUrl(e.url) || ("https://www.google.com/maps/search/?api=1&query=" + encodeURIComponent(e.small || ""));
+        const l = out(u, "fp-loc"); const map = el("span","fp-map"); map.append(el("span","fp-pin")); l.append(map, el("b",null, e.small || "")); a.append(l); break;
+      }
+      case "list": { const ol = el("ol","fp-list"); feedLines(e.text).forEach(x => ol.append(el("li",null,x))); a.append(ol); break; }
+    }
+    a.append(cap ? el("p","fp-cap", cap) : el("div","fp-nocap"));
+    if (canEdit){
+      const bd = e.pending ? "pending" : e.hidden ? "hidden" : (e.revealAt && e.revealAt > nowMs()) ? "scheduled" : "";
+      if (bd) a.prepend(el("span","adm-badge b-" + bd, bd));
+      if (db && e.id !== "lr"){
+        const r = el("div","fp-edit");
+        if (e.pending && isOwnerV && !e.legacy){ const ok = el("button","btn","Approve"); ok.type = "button"; ok.addEventListener("click", () => setEntry(pid, e.id, {pending:false})); r.append(ok); }
+        r.append(trashBtn("post", () => e.legacy === "videos" ? removeFrom(pid, "videos", x => x === e.url) : e.legacy ? removeFrom(pid, e.legacy, x => x.id === e.mid) : removeFrom(pid, "feed", x => x.id === e.id)));
+        a.append(r);
+      }
+    }
+    return a;
+  }
+  function feedWin(p, id, feed){
+    const cityLc = (p.city || "untitled").toLowerCase();
+    const n = feed.length;
+    const fw = mkWin(cityLc, [fmtDate(p.date), p.venue].filter(Boolean).join(" · "), `${n} post${n === 1 ? "" : "s"}`);
+    fw.body.classList.add("feedbody");
+    if (p.line){
+      const line = el("div","line"); line.append(miniAvatar());
+      const lp = el("p"); lp.append(el("span","who","Lillenskap posted:"), document.createTextNode(p.line));
+      line.append(lp); fw.body.append(line);
+    }
+    if (!n) fw.body.append(el("p","fp-empty","No posts yet."));
+    feed.forEach(e => fw.body.append(feedPost(e, p, id)));
+    return fw.w;
+  }
+  // crew: make one post of any type for any city
+  function composer(defPid){
+    const f = el("form","form fp-compose"); f.setAttribute("autocomplete","off");
+    f.append(el("div","adm-fh","NEW POST"));
+    const row = (id, label, inp) => { const l = el("label"); l.htmlFor = id; l.append(el("span","fp-lab", label), inp); return l; };
+    const city = el("select"); city.id = "fpCity";
+    posts.slice().sort((a,b) => (showDay(a.data.date) || 0) - (showDay(b.data.date) || 0)).forEach(r => { const o = el("option",null, (r.data.city || "untitled").toLowerCase() + (r.data.date ? " · " + shortDate(r.data.date) : "")); o.value = r.id; if (r.id === defPid) o.selected = true; city.append(o); });
+    const kind = el("select"); kind.id = "fpKind"; FEED_KINDS.forEach(([k,l]) => { const o = el("option",null,l); o.value = k; kind.append(o); });
+    const files = el("input"); files.type = "file"; files.id = "fpFiles"; files.multiple = true;
+    const url = el("input"); url.type = "url"; url.id = "fpUrl";
+    const small = el("input"); small.type = "text"; small.id = "fpSmall";
+    const text = el("textarea"); text.id = "fpText";
+    const opts = el("textarea"); opts.id = "fpOpts";
+    const cap = el("input"); cap.type = "text"; cap.id = "fpCap";
+    const rows = {city:row("fpCity","City",city), kind:row("fpKind","Type",kind), files:row("fpFiles","Files",files), url:row("fpUrl","Link",url), small:row("fpSmall","",small), text:row("fpText","",text), opts:row("fpOpts","",opts), cap:row("fpCap","Caption (optional)",cap)};
+    Object.values(rows).forEach(r => f.append(r));
+    const act = el("div","actions"); const st = el("span","status"); st.setAttribute("role","status"); const go = el("button","btn def","Post"); go.type = "submit"; act.append(st, go); f.append(act);
+    const sync = () => {
+      const k = kind.value, spec = FEED_F[k] || {};
+      rows.files.hidden = !spec.files; files.accept = (FEED_KINDS.find(x => x[0] === k) || [])[2] || "";
+      ["url","small","text","opts"].forEach(nm => { rows[nm].hidden = !spec[nm]; if (spec[nm]) rows[nm].querySelector(".fp-lab").textContent = spec[nm]; });
+    };
+    kind.addEventListener("change", () => { sync(); st.textContent = ""; }); sync();
+    f.addEventListener("submit", async (ev) => {
+      ev.preventDefault();
+      const k = kind.value, spec = FEED_F[k] || {}, pid = city.value, rec = postById(pid);
+      if (!rec || !db || !assets){ st.textContent = "Pick a city."; return; }
+      const fl = spec.files ? [...files.files] : [];
+      const need = (c, msg) => { if (c){ st.textContent = msg; return true; } return false; };
+      if (need(spec.files && !fl.length, "Add a file first.")) return;
+      if (need(k === "youtube" && !isYT(url.value), "Paste a YouTube link.")) return;
+      if (need(["instagram","x","tiktok","link"].includes(k) && !safeUrl(url.value), "Paste the link.")) return;
+      if (need(spec.text && !text.value.trim(), "Write something first.")) return;
+      if (need(k === "poll" && feedLines(opts.value).length < 2, "Add at least two options.")) return;
+      if (need(k === "location" && !small.value.trim(), "Add the place.")) return;
+      go.disabled = true;
+      try {
+        const media = [];
+        for (let i = 0; i < fl.length; i++){
+          st.textContent = fl.length > 1 ? `Uploading ${i+1} of ${fl.length}…` : "Uploading…";
+          const file = /^(image|video)\//.test(fl[i].type) ? await prepare(fl[i]) : fl[i];
+          if (file.size > 50 * 1048576) throw {code:"too_large"};
+          const r = await assets.upload(file);
+          media.push({id:r.id, type:r.contentType || file.type, name:file.name});
+        }
+        const e = {id:"f" + Date.now().toString(36) + Math.random().toString(36).slice(2,8), kind:k, postedAt:Date.now(), by:me || null};
+        if (media.length) e.media = media;
+        if (spec.url && url.value.trim()) e.url = url.value.trim();
+        if (spec.small && small.value.trim()) e.small = small.value.trim();
+        if (spec.text) e.text = text.value.trim();
+        if (spec.opts && opts.value.trim()) e.opts = opts.value.trim();
+        if (cap.value.trim()) e.caption = cap.value.trim();
+        if (settings.approval && !isOwnerV) e.pending = true;
+        const cur = postById(pid) || rec; const arr = mediaList(cur.data.feed).concat([e]);
+        cur.data = {...cur.data, feed: arr};
+        await upd(pid, {feed: arr, postedAt: Date.now()});
+        logAct(`posted a ${k} to ${(cur.data.city || "").toLowerCase()}`);
+        st.textContent = e.pending ? "Posted. Waiting for approval." : "Posted.";
+        [files, url, small, text, opts, cap].forEach(x => { x.value = ""; });
+      } catch(err){ st.textContent = qWhy(err); }
+      finally { go.disabled = false; }
+    });
+    return f;
+  }
+
   function cityDesk(p, id){
     const stateKey = slug(p.city) || id;
     const cityLc = (p.city || "untitled").toLowerCase();
@@ -1461,6 +1720,8 @@ body:not([data-city]) .icon span,body[data-city=""] .icon span{background:#1b144
     const recap = p.recap && typeof p.recap.id === "string" ? p.recap : null;
     const index = new Map(), ref = {};
     const items = [];
+    const feed = feedEntries(p);
+    items.push({key:"feed", icon:"doc", label:"Posts", badge:feed.length, width:680, build(){ return feedWin(p, id, feed); }});
 
     items.push({key:"info", icon:"doc", label:`${cityLc} info`, width:520, build(){
       const tag = el("span"); tag.textContent = `${fmtDate(p.date)}${p.venue ? " · " + p.venue : ""}`;
@@ -1691,7 +1952,7 @@ body:not([data-city]) .icon span,body[data-city=""] .icon span{background:#1b144
   function openFinder(key){
     if (!key) return;
     if (!finder){ finderWanted = key; return; }
-    if (finder.has(key)) { finder.open(key); return; }
+    if (finder.has(key)) { finder.open(key); if (/^c:[^/]+$/.test(key) && finder.has(key + "/posts")) finder.open(key + "/posts"); return; }
     const name = key.startsWith("c:") ? key.slice(2).replace(/-/g, " ") : key;
     macDialog("Finder", (body) => { const a = el("div","alert"); a.append(el("div","stop","?")); const m = el("p",null,`Lillenskap hasn't been to “${name}”. Pick a date folder from the Tour.`); m.style.margin = "6px 0 0"; a.append(m); body.append(a); });
   }
@@ -1779,7 +2040,9 @@ body:not([data-city]) .icon span,body[data-city=""] .icon span{background:#1b144
         register(photos, where("Photos"), id, "photos"); register(phone, where("iPhone"), id, "phone");
         register(polas, where("Polaroids"), id, "polaroids"); register(outtakes, where("Trash"), id, "trash");
       }
+      const feed = feedEntries(p);
       const kids = [
+        {key: base + "/posts", icon:"doc", label:"Posts", badge: locked ? 0 : feed.length, locked: lockedAll},
         {key: base + "/photos", icon:"folder", label:"Photos", badge: locked ? 0 : photos.length, locked: lockedAll},
         {key: base + "/phone", icon:"folder", label:"iPhone", badge: locked ? 0 : phone.length, locked: lockedAll},
         {key: base + "/pola", icon:"pola", label:"Polaroids", badge: locked ? 0 : polas.length, locked: lockedAll},
@@ -1805,6 +2068,7 @@ body:not([data-city]) .icon span,body[data-city=""] .icon span{background:#1b144
         else w.body.append(el("p","empty-trash", empty));
         return w.w;
       }});
+      add({key: base + "/posts", width:680, build: locked ? lockedWin("Posts") : () => feedWin(p, id, feed)});
       mediaFolder(base + "/photos", "Photos", photos, "IMG", "grid", "photos", 640, "No photos yet.");
       mediaFolder(base + "/phone", "iPhone", phone, "IMG_E", "grid tall", "phone", 540, "No iPhone pics yet.");
       mediaFolder(base + "/pola", "Polaroids", polas, "POLA", "grid pola", "polaroids", 620, "No polaroids yet.");
@@ -2432,7 +2696,7 @@ body:not([data-city]) .icon span,body[data-city=""] .icon span{background:#1b144
     const rec = postById(pid); if (!rec) return;
     const del = (rec.data.deleted || []).filter(x => !sameDel(x, m));
     if (m.link){ const v = ytList(rec.data.videos); await upd(pid, {deleted: del, videos: v.includes(m.link) ? v : [...v, m.link]}); }
-    else { const {from, deletedAt, ...item} = m; const f = FOLDERS.some(x => x[0] === from) ? from : "photos"; await upd(pid, {deleted: del, [f]: [...mediaList(rec.data[f]), item]}); }
+    else { const {from, deletedAt, ...item} = m; const f = (FOLDERS.some(x => x[0] === from) || from === "feed") ? from : "photos"; await upd(pid, {deleted: del, [f]: [...mediaList(rec.data[f]), item]}); }
     logAct(`restored ${m.link ? "a recap link" : (m.name || "a file")} in ${(rec.data.city || "").toLowerCase()}`);
   }
   async function destroyDeleted(pid, m){
@@ -2526,7 +2790,7 @@ body:not([data-city]) .icon span,body[data-city=""] .icon span{background:#1b144
       inp.addEventListener("change", () => { enqueue([...inp.files], pid, "inbox"); inp.value = ""; });
       grid.prepend(inp, lab); }
     if (settings.approval && !isOwnerV) body.append(el("p","hint ptn-note","Uploads wait for approval before fans see them."));
-    body.append(grid, queueEl());
+    body.append(grid, queueEl(), composer(pid));
     // his line
     const lf = el("form","form ptn-form"); lf.setAttribute("autocomplete","off");
     const ll = el("label"); ll.htmlFor = "ptnLine"; ll.textContent = "Lillenskap's line"; const ta = el("textarea"); ta.id = "ptnLine"; ta.value = p.line || ""; ll.append(ta);
